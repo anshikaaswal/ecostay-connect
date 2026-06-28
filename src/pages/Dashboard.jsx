@@ -1,10 +1,59 @@
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
-import { Button } from '../components/ui'
+import { Button, Loader } from '../components/ui'
+import toast from 'react-hot-toast'
+import { getBookings, getHomestays } from '../services/api'
 
 const Dashboard = () => {
   const navigate = useNavigate()
+  const [bookings, setBookings] = useState([])
+  const [homestays, setHomestays] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [bookingsRes, homestaysRes] = await Promise.all([
+          getBookings(),
+          getHomestays()
+        ])
+        setBookings(bookingsRes.data.data)
+        setHomestays(homestaysRes.data.data)
+      } catch (error) {
+        toast.error('Failed to load dashboard data.')
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchData()
+  }, [])
+
+  const getHomestayName = (homestayId) => {
+    const homestay = homestays.find((h) => h.id === homestayId)
+    return homestay ? homestay.name : 'Unknown Homestay'
+  }
+
+  const getHomestayImage = (homestayId) => {
+    const homestay = homestays.find((h) => h.id === homestayId)
+    return homestay ? homestay.image : ''
+  }
+
+  const upcomingBookings = bookings.filter((b) => new Date(b.checkIn) > new Date())
+  const completedBookings = bookings.filter((b) => new Date(b.checkOut) < new Date())
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
+        <Navbar />
+        <main className="flex-grow flex items-center justify-center">
+          <Loader size="lg" />
+        </main>
+        <Footer />
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
@@ -26,18 +75,20 @@ const Dashboard = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border-l-4 border-green-500">
                 <p className="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Bookings</p>
-                <p className="text-3xl font-bold text-gray-800 dark:text-gray-200 mt-2">3</p>
-                <p className="text-sm text-green-600 dark:text-green-400 mt-1">↑ 2 this month</p>
+                <p className="text-3xl font-bold text-gray-800 dark:text-gray-200 mt-2">{bookings.length}</p>
+                <p className="text-sm text-green-600 dark:text-green-400 mt-1">Across all homestays</p>
               </div>
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border-l-4 border-teal-500">
                 <p className="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider">Upcoming Stays</p>
-                <p className="text-3xl font-bold text-gray-800 dark:text-gray-200 mt-2">1</p>
-                <p className="text-sm text-teal-600 dark:text-teal-400 mt-1">Next: Forest Retreat</p>
+                <p className="text-3xl font-bold text-gray-800 dark:text-gray-200 mt-2">{upcomingBookings.length}</p>
+                <p className="text-sm text-teal-600 dark:text-teal-400 mt-1">
+                  {upcomingBookings.length > 0 ? `Next: ${getHomestayName(upcomingBookings[0].homestayId)}` : 'No upcoming stays'}
+                </p>
               </div>
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border-l-4 border-amber-500">
-                <p className="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider">Wishlist</p>
-                <p className="text-3xl font-bold text-gray-800 dark:text-gray-200 mt-2">5</p>
-                <p className="text-sm text-amber-600 dark:text-amber-400 mt-1">Saved homestays</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider">Homestays Available</p>
+                <p className="text-3xl font-bold text-gray-800 dark:text-gray-200 mt-2">{homestays.length}</p>
+                <p className="text-sm text-amber-600 dark:text-amber-400 mt-1">Eco-friendly stays</p>
               </div>
             </div>
 
@@ -45,43 +96,50 @@ const Dashboard = () => {
               {/* Recent Bookings */}
               <div className="lg:col-span-2 space-y-8">
                 <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-8">
-                  <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6">Recent Bookings</h2>
-                  <div className="space-y-4">
-                    {[
-                      { name: 'Mountain View Cottage', date: 'Jun 15 - Jun 18, 2026', status: 'Completed', image: 'https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=100&h=100&fit=crop' },
-                      { name: 'Forest Retreat', date: 'Jul 10 - Jul 14, 2026', status: 'Upcoming', image: 'https://images.unsplash.com/photo-1499793983690-e29f59e78f3f?w=100&h=100&fit=crop' },
-                      { name: 'River Side Stay', date: 'May 5 - May 8, 2026', status: 'Completed', image: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?w=100&h=100&fit=crop' },
-                    ].map((booking, i) => (
-                      <div key={i} className="flex items-center space-x-4 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer"
-                        onClick={() => navigate(`/homestay/${booking.name.toLowerCase().replace(/\s+/g, '-')}`)}
-                      >
-                        <img src={booking.image} alt={booking.name} className="w-16 h-16 rounded-lg object-cover flex-shrink-0" />
-                        <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-gray-800 dark:text-gray-200 truncate">{booking.name}</p>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">{booking.date}</p>
+                  <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6">
+                    {bookings.length > 0 ? 'All Bookings' : 'No Bookings Yet'}
+                  </h2>
+                  {bookings.length === 0 ? (
+                    <div className="text-center py-8">
+                      <p className="text-gray-500 dark:text-gray-400 mb-4">You haven't made any bookings yet.</p>
+                      <Button variant="primary" onClick={() => navigate('/')}>
+                        Browse Homestays
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {bookings.map((booking) => (
+                        <div key={booking.id} className="flex items-center space-x-4 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer"
+                          onClick={() => navigate(`/homestay/${booking.homestayId}`)}
+                        >
+                          {getHomestayImage(booking.homestayId) && (
+                            <img src={getHomestayImage(booking.homestayId)} alt={getHomestayName(booking.homestayId)} className="w-16 h-16 rounded-lg object-cover flex-shrink-0" />
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <p className="font-semibold text-gray-800 dark:text-gray-200 truncate">{getHomestayName(booking.homestayId)}</p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">{booking.checkIn} to {booking.checkOut}</p>
+                            <p className="text-xs text-gray-400">Booked by: {booking.user}</p>
+                          </div>
+                          <span className={`px-3 py-1 text-xs font-semibold rounded-full ${
+                            new Date(booking.checkOut) < new Date()
+                              ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300'
+                              : 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
+                          }`}>
+                            {new Date(booking.checkOut) < new Date() ? 'Completed' : 'Upcoming'}
+                          </span>
                         </div>
-                        <span className={`px-3 py-1 text-xs font-semibold rounded-full ${
-                          booking.status === 'Completed' 
-                            ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300' 
-                            : 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
-                        }`}>
-                          {booking.status}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {/* Recommended Destinations */}
                 <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-8">
                   <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6">Recommended Destinations</h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {[
-                      { name: 'Himalayan Eco Lodge', location: 'Uttarakhand', image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=200&fit=crop' },
-                      { name: 'Green Valley Homestay', location: 'Coorg', image: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=300&h=200&fit=crop' },
-                    ].map((dest, i) => (
-                      <div key={i} className="relative rounded-xl overflow-hidden h-40 group cursor-pointer"
-                        onClick={() => navigate(`/homestay/${dest.name.toLowerCase().replace(/\s+/g, '-')}`)}
+                    {homestays.slice(0, 4).map((dest) => (
+                      <div key={dest.id} className="relative rounded-xl overflow-hidden h-40 group cursor-pointer"
+                        onClick={() => navigate(`/homestay/${dest.id}`)}
                       >
                         <img src={dest.image} alt={dest.name} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
@@ -95,25 +153,19 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              {/* Saved Homestays */}
+              {/* Saved Homestays & AI Planner */}
               <div className="space-y-8">
                 <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-8">
-                  <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6">Saved Homestays</h2>
+                  <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6">All Homestays</h2>
                   <div className="space-y-4">
-                    {[
-                      { name: 'River Side Stay', price: '₹2,800/night', image: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?w=200&h=150&fit=crop' },
-                      { name: 'Himalayan Eco Lodge', price: '₹3,500/night', image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=200&h=150&fit=crop' },
-                      { name: 'Green Valley Homestay', price: '₹2,000/night', image: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=200&h=150&fit=crop' },
-                      { name: 'Lakeside Cabin', price: '₹3,200/night', image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=200&h=150&fit=crop' },
-                      { name: 'Forest Retreat', price: '₹2,500/night', image: 'https://images.unsplash.com/photo-1499793983690-e29f59e78f3f?w=200&h=150&fit=crop' },
-                    ].map((item, i) => (
-                      <div key={i} className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer"
-                        onClick={() => navigate(`/homestay/${item.name.toLowerCase().replace(/\s+/g, '-')}`)}
+                    {homestays.map((item) => (
+                      <div key={item.id} className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer"
+                        onClick={() => navigate(`/homestay/${item.id}`)}
                       >
                         <img src={item.image} alt={item.name} className="w-14 h-14 rounded-lg object-cover flex-shrink-0" />
                         <div className="flex-1 min-w-0">
                           <p className="font-semibold text-gray-800 dark:text-gray-200 text-sm truncate">{item.name}</p>
-                          <p className="text-xs text-green-600 dark:text-green-400 font-medium">{item.price}</p>
+                          <p className="text-xs text-green-600 dark:text-green-400 font-medium">₹{item.price}/night</p>
                         </div>
                         <svg className="w-4 h-4 text-red-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                           <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />

@@ -1,78 +1,74 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
-import { Button } from '../components/ui'
-import { showSuccess } from '../components/ui'
-
-const homestaysData = [
-  {
-    id: 'mountain-view-cottage',
-    image: 'https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=1200&h=800&fit=crop',
-    title: 'Mountain View Cottage',
-    location: 'Himachal Pradesh, India',
-    price: '₹3,000 / night',
-    rating: 4.8,
-    reviews: 24,
-    amenities: ['Free WiFi', 'Organic Breakfast', 'Guided Trekking', 'Bonfire', 'Parking', 'Mountain View'],
-    description: 'Nestled in the serene hills, this cozy cottage offers breathtaking mountain views, fresh organic meals, and guided nature trails through lush pine forests. Perfect for a peaceful getaway surrounded by nature.',
-    longDescription: 'Experience the tranquility of the Himalayas at our Mountain View Cottage. Wake up to the sight of snow-capped peaks, enjoy organic breakfast made from locally sourced ingredients, and explore the surrounding pine forests on guided treks. Our eco-friendly cottage uses solar power and rainwater harvesting to minimize environmental impact.',
-  },
-  {
-    id: 'forest-retreat',
-    image: 'https://images.unsplash.com/photo-1499793983690-e29f59e78f3f?w=1200&h=800&fit=crop',
-    title: 'Forest Retreat',
-    location: 'Kerala, India',
-    price: '₹2,500 / night',
-    rating: 4.6,
-    reviews: 18,
-    amenities: ['Bird Watching', 'Yoga Sessions', 'Handcrafted Cabin', 'Organic Meals', 'Nature Walks'],
-    description: 'Immerse yourself in the heart of the wilderness. Enjoy bird watching, yoga sessions at sunrise, and sustainable living in a handcrafted wooden cabin.',
-    longDescription: 'Our Forest Retreat offers a unique opportunity to disconnect from the modern world and reconnect with nature. Practice yoga at sunrise, listen to the symphony of birds, and sleep in a beautifully handcrafted wooden cabin built using sustainable materials.',
-  },
-  {
-    id: 'river-side-stay',
-    image: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?w=1200&h=800&fit=crop',
-    title: 'River Side Stay',
-    location: 'Rishikesh, India',
-    price: '₹2,800 / night',
-    rating: 4.7,
-    reviews: 31,
-    amenities: ['Kayaking', 'Fishing', 'Farm-to-Table', 'Campfire', 'River View', 'Tent Camping'],
-    description: 'Wake up to the soothing sounds of flowing water. This eco-friendly riverside stay offers kayaking, fishing, and farm-to-table dining experiences.',
-    longDescription: 'Located on the banks of the Ganges, our Riverside Stay combines adventure with sustainability. Try your hand at kayaking, enjoy freshly caught fish, and dine on farm-fresh organic produce while listening to the soothing sounds of the river.',
-  },
-  {
-    id: 'himalayan-eco-lodge',
-    image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=800&fit=crop',
-    title: 'Himalayan Eco Lodge',
-    location: 'Uttarakhand, India',
-    price: '₹3,500 / night',
-    rating: 4.9,
-    reviews: 42,
-    amenities: ['Solar Power', 'Stargazing', 'Digital Detox', 'Trekking', 'Organic Farm', 'Hot Springs'],
-    description: 'Perched on a cliff overlooking the valley, this lodge runs entirely on solar power. Perfect for stargazing and digital detox retreats.',
-    longDescription: 'Our Himalayan Eco Lodge is a model of sustainable tourism. Entirely powered by solar energy, this lodge offers unparalleled views of the Himalayan range. Stargaze at night, soak in natural hot springs, and enjoy meals prepared with ingredients from our organic farm.',
-  },
-  {
-    id: 'green-valley-homestay',
-    image: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1200&h=800&fit=crop',
-    title: 'Green Valley Homestay',
-    location: 'Coorg, India',
-    price: '₹2,000 / night',
-    rating: 4.5,
-    reviews: 15,
-    amenities: ['Coffee Plantation', 'Bird Watching', 'Local Cuisine', 'Nature Trails', 'Campfire'],
-    description: 'Stay amidst lush coffee plantations in Coorg. Experience local Kodava culture, freshly brewed coffee, and scenic nature trails.',
-    longDescription: 'Green Valley Homestay offers an authentic Coorg experience. Walk through aromatic coffee plantations, learn about the local Kodava culture, enjoy traditional cuisine, and explore the verdant landscapes on guided nature trails.',
-  },
-]
+import { Button, Loader } from '../components/ui'
+import toast from 'react-hot-toast'
+import { getHomestayById, createBooking } from '../services/api'
 
 const HomestayDetail = () => {
   const { id } = useParams()
-  const [selectedImage, setSelectedImage] = useState(0)
+  const [homestay, setHomestay] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [booking, setBooking] = useState({
+    user: '',
+    checkIn: '',
+    checkOut: ''
+  })
+  const [bookingLoading, setBookingLoading] = useState(false)
 
-  const homestay = homestaysData.find((h) => h.id === id)
+  useEffect(() => {
+    const fetchHomestay = async () => {
+      try {
+        const response = await getHomestayById(id)
+        setHomestay(response.data.data)
+      } catch (error) {
+        toast.error('Failed to load homestay details.')
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchHomestay()
+  }, [id])
+
+  const handleInputChange = (e) => {
+    setBooking({ ...booking, [e.target.name]: e.target.value })
+  }
+
+  const handleBookNow = async () => {
+    if (!booking.user || !booking.checkIn || !booking.checkOut) {
+      toast.error('Please fill in all booking fields (Name, Check-in, Check-out)')
+      return
+    }
+
+    setBookingLoading(true)
+    try {
+      await createBooking({
+        user: booking.user,
+        homestayId: parseInt(id),
+        checkIn: booking.checkIn,
+        checkOut: booking.checkOut
+      })
+      toast.success(`Booking confirmed at ${homestay.name}! Check your dashboard for details.`)
+      setBooking({ user: '', checkIn: '', checkOut: '' })
+    } catch (error) {
+      toast.error('Booking failed. Please try again.')
+    } finally {
+      setBookingLoading(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <main className="flex-grow flex items-center justify-center">
+          <Loader size="lg" />
+        </main>
+        <Footer />
+      </div>
+    )
+  }
 
   if (!homestay) {
     return (
@@ -89,10 +85,6 @@ const HomestayDetail = () => {
     )
   }
 
-  const handleBookNow = () => {
-    showSuccess(`Booking confirmed at ${homestay.title}! Check your dashboard for details.`)
-  }
-
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
       <Navbar />
@@ -102,14 +94,14 @@ const HomestayDetail = () => {
         <section className="relative h-[50vh] md:h-[60vh] overflow-hidden">
           <img
             src={homestay.image}
-            alt={homestay.title}
+            alt={homestay.name}
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 p-8">
             <div className="max-w-7xl mx-auto">
               <Link to="/" className="text-white/80 hover:text-white text-sm mb-2 inline-block">&larr; Back to Home</Link>
-              <h1 className="text-4xl md:text-5xl font-bold text-white">{homestay.title}</h1>
+              <h1 className="text-4xl md:text-5xl font-bold text-white">{homestay.name}</h1>
               <p className="text-white/80 text-lg mt-2">{homestay.location}</p>
             </div>
           </div>
@@ -123,7 +115,7 @@ const HomestayDetail = () => {
               {/* Description */}
               <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-md">
                 <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">About This Stay</h2>
-                <p className="text-gray-600 dark:text-gray-400 leading-relaxed">{homestay.longDescription}</p>
+                <p className="text-gray-600 dark:text-gray-400 leading-relaxed">{homestay.description}</p>
               </div>
 
               {/* Amenities */}
@@ -140,46 +132,16 @@ const HomestayDetail = () => {
                   ))}
                 </div>
               </div>
-
-              {/* Reviews */}
-              <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-md">
-                <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">Reviews</h2>
-                <div className="space-y-4">
-                  {[1, 2, 3].map((i) => (
-                    <div key={i} className="border-b border-gray-200 dark:border-gray-700 pb-4 last:border-b-0 last:pb-0">
-                      <div className="flex items-center space-x-3 mb-2">
-                        <div className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center text-white font-bold">
-                          {['A', 'S', 'R'][i - 1]}
-                        </div>
-                        <div>
-                          <p className="font-semibold text-gray-800 dark:text-gray-200">{['Arjun M.', 'Sophia K.', 'Rahul D.'][i - 1]}</p>
-                          <div className="flex items-center text-yellow-400 text-sm">
-                            {'★'.repeat(5 - i + 4)}{'☆'.repeat(i - 1)}
-                          </div>
-                        </div>
-                      </div>
-                      <p className="text-gray-600 dark:text-gray-400 text-sm">
-                        {[
-                          'An absolutely breathtaking experience. The views were stunning and the hospitality was unmatched. Highly recommend for anyone seeking peace and quiet.',
-                          'Loved the eco-friendly approach. The solar-powered lodge was amazing and the organic food was delicious. Will definitely visit again!',
-                          'Perfect getaway from city life. The guided treks were memorable and the staff was incredibly welcoming. A true gem in the mountains.',
-                        ][i - 1]}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
             </div>
 
             {/* Right Column - Booking Card */}
             <div className="lg:col-span-1">
               <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-md sticky top-24">
                 <div className="mb-6">
-                  <p className="text-3xl font-bold text-green-700 dark:text-green-400">{homestay.price}</p>
+                  <p className="text-3xl font-bold text-green-700 dark:text-green-400">₹{homestay.price} / night</p>
                   <div className="flex items-center mt-2 text-sm text-gray-500 dark:text-gray-400">
                     <span className="text-yellow-400 mr-1">★</span>
                     <span className="font-semibold mr-1">{homestay.rating}</span>
-                    <span>({homestay.reviews} reviews)</span>
                   </div>
                 </div>
 
@@ -199,13 +161,40 @@ const HomestayDetail = () => {
                   </div>
                 </div>
 
+                {/* Booking Form */}
+                <div className="space-y-4 mb-6">
+                  <input
+                    type="text"
+                    name="user"
+                    placeholder="Your Name"
+                    value={booking.user}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500"
+                  />
+                  <input
+                    type="date"
+                    name="checkIn"
+                    value={booking.checkIn}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500"
+                  />
+                  <input
+                    type="date"
+                    name="checkOut"
+                    value={booking.checkOut}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500"
+                  />
+                </div>
+
                 <Button
                   variant="primary"
                   size="lg"
                   className="w-full"
                   onClick={handleBookNow}
+                  disabled={bookingLoading}
                 >
-                  Book Now
+                  {bookingLoading ? 'Booking...' : 'Book Now'}
                 </Button>
 
                 <p className="text-center text-xs text-gray-400 mt-4">No cancellation fees</p>

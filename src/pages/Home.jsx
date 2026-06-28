@@ -1,48 +1,12 @@
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Hero from '../components/Hero'
 import Card from '../components/Card'
 import Footer from '../components/Footer'
-import { Button } from '../components/ui'
-
-const homestays = [
-  {
-    id: 'mountain-view-cottage',
-    image: 'https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=600&h=400&fit=crop',
-    title: 'Mountain View Cottage',
-    description: 'Nestled in the serene hills, this cozy cottage offers breathtaking mountain views, fresh organic meals, and guided nature trails through lush pine forests.'
-  },
-  {
-    id: 'forest-retreat',
-    image: 'https://images.unsplash.com/photo-1499793983690-e29f59e78f3f?w=600&h=400&fit=crop',
-    title: 'Forest Retreat',
-    description: 'Immerse yourself in the heart of the wilderness. Enjoy bird watching, yoga sessions at sunrise, and sustainable living in a handcrafted wooden cabin.'
-  },
-  {
-    id: 'river-side-stay',
-    image: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?w=600&h=400&fit=crop',
-    title: 'River Side Stay',
-    description: 'Wake up to the soothing sounds of flowing water. This eco-friendly riverside stay offers kayaking, fishing, and farm-to-table dining experiences.'
-  },
-  {
-    id: 'himalayan-eco-lodge',
-    image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop',
-    title: 'Himalayan Eco Lodge',
-    description: 'Perched on a cliff overlooking the valley, this lodge runs entirely on solar power. Perfect for stargazing and digital detox retreats.'
-  },
-  {
-    id: 'green-valley-homestay',
-    image: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600&h=400&fit=crop',
-    title: 'Green Valley Homestay',
-    description: 'A stunning villa built entirely from sustainable bamboo. Surrounded by tropical gardens with a natural spring pool and organic farm.'
-  },
-  {
-    id: 'lakeside-cabin',
-    image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&h=400&fit=crop',
-    title: 'Lakeside Cabin',
-    description: 'Experience tranquility at our handcrafted lakeside cabin. Enjoy canoeing, local cuisine cooking classes, and eco-friendly amenities.'
-  },
-]
+import { Button, Loader } from '../components/ui'
+import toast from 'react-hot-toast'
+import { getHomestays } from '../services/api'
 
 const popularDestinations = [
   { name: 'Himachal Pradesh', image: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?w=600&h=400&fit=crop', stays: '12 Eco Stays' },
@@ -53,6 +17,22 @@ const popularDestinations = [
 
 const Home = () => {
   const navigate = useNavigate()
+  const [homestays, setHomestays] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchHomestays = async () => {
+      try {
+        const response = await getHomestays()
+        setHomestays(response.data.data)
+      } catch (error) {
+        toast.error('Failed to load homestays. Please try again later.')
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchHomestays()
+  }, [])
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -72,17 +52,23 @@ const Home = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {homestays.slice(0, 6).map((stay, index) => (
-              <Card
-                key={index}
-                id={stay.id}
-                image={stay.image}
-                title={stay.title}
-                description={stay.description}
-              />
-            ))}
-          </div>
+          {loading ? (
+            <div className="flex justify-center py-12">
+              <Loader />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {homestays.slice(0, 6).map((stay) => (
+                <Card
+                  key={stay.id}
+                  id={stay.id}
+                  image={stay.image}
+                  title={stay.name}
+                  description={stay.description}
+                />
+              ))}
+            </div>
+          )}
 
           <div className="text-center mt-10">
             <Button

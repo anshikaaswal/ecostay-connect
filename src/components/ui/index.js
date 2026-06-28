@@ -1,5 +1,5 @@
 export { default as Button } from './Button'
 export { default as Input } from './Input'
 export { default as Modal } from './Modal'
-export { Spinner, Skeleton, CardSkeleton } from './Loader'
+export { Spinner as Loader, Spinner, Skeleton, CardSkeleton } from './Loader'
 export { showSuccess, showError, showInfo } from './Toast'

@@ -1,0 +1,275 @@
+{
+  "info": {
+    "name": "EcoStay Connect API",
+    "description": "API collection for EcoStay Connect - Homestay & Eco-Tourism Platform",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Homestays",
+      "item": [
+        {
+          "name": "GET All Homestays",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/homestays",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "homestays"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"success\": true,\n  \"count\": 6,\n  \"data\": [\n    {\n      \"id\": 1,\n      \"name\": \"Mountain View Cottage\",\n      \"location\": \"Nainital\",\n      \"price\": 1800,\n      \"rating\": 4.8,\n      \"image\": \"https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=600&h=400&fit=crop\",\n      \"description\": \"Nestled in the serene hills...\",\n      \"amenities\": [\"WiFi\", \"Parking\", \"Breakfast\", \"Trekking\", \"Bonfire\"]\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "GET Homestay by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/homestays/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "homestays", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"Mountain View Cottage\",\n    \"location\": \"Nainital\",\n    \"price\": 1800,\n    \"rating\": 4.8,\n    \"image\": \"...\",\n    \"description\": \"...\",\n    \"amenities\": [\"WiFi\", \"Parking\", \"Breakfast\", \"Trekking\", \"Bonfire\"]\n  }\n}"
+            },
+            {
+              "name": "Not Found",
+              "status": "Not Found",
+              "code": 404,
+              "body": "{\n  \"success\": false,\n  \"message\": \"Homestay not found\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Search Homestays",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/homestays/search?q=mountain",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "homestays", "search"],
+              "query": [
+                { "key": "q", "value": "mountain" }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"count\": 1,\n  \"data\": [\n    {\n      \"id\": 1,\n      \"name\": \"Mountain View Cottage\",\n      \"location\": \"Nainital\",\n      \"price\": 1800,\n      \"rating\": 4.8,\n      \"image\": \"...\",\n      \"description\": \"...\",\n      \"amenities\": [\"WiFi\", \"Parking\", \"Breakfast\", \"Trekking\", \"Bonfire\"]\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "POST Create Homestay",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Beachside Villa\",\n  \"location\": \"Goa\",\n  \"price\": 4500,\n  \"rating\": 4.9,\n  \"description\": \"A luxurious beachside eco-villa with solar power and organic farming.\",\n  \"amenities\": [\"Beach Access\", \"Solar Power\", \"Organic Food\", \"Yoga\", \"Surfing\"]\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/homestays",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "homestays"]
+            }
+          },
+          "response": [
+            {
+              "name": "Created",
+              "status": "Created",
+              "code": 201,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": 7,\n    \"name\": \"Beachside Villa\",\n    \"location\": \"Goa\",\n    \"price\": 4500,\n    \"rating\": 4.9,\n    \"image\": \"https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600&h=400&fit=crop\",\n    \"description\": \"A luxurious beachside eco-villa with solar power and organic farming.\",\n    \"amenities\": [\"Beach Access\", \"Solar Power\", \"Organic Food\", \"Yoga\", \"Surfing\"]\n  }\n}"
+            },
+            {
+              "name": "Validation Error",
+              "status": "Bad Request",
+              "code": 400,
+              "body": "{\n  \"success\": false,\n  \"message\": \"Validation Error: name, location, and price are required\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "PUT Update Homestay",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Mountain View Cottage - Updated\",\n  \"price\": 2000,\n  \"rating\": 4.9\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/homestays/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "homestays", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"Mountain View Cottage - Updated\",\n    \"location\": \"Nainital\",\n    \"price\": 2000,\n    \"rating\": 4.9,\n    \"image\": \"...\",\n    \"description\": \"...\",\n    \"amenities\": [\"WiFi\", \"Parking\", \"Breakfast\", \"Trekking\", \"Bonfire\"]\n  }\n}"
+            },
+            {
+              "name": "Not Found",
+              "status": "Not Found",
+              "code": 404,
+              "body": "{\n  \"success\": false,\n  \"message\": \"Homestay not found\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "DELETE Homestay",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/homestays/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "homestays", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "No Content",
+              "status": "No Content",
+              "code": 204
+            },
+            {
+              "name": "Not Found",
+              "status": "Not Found",
+              "code": 404,
+              "body": "{\n  \"success\": false,\n  \"message\": \"Homestay not found\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Bookings",
+      "item": [
+        {
+          "name": "GET All Bookings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/bookings",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "bookings"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"count\": 2,\n  \"data\": [\n    {\n      \"id\": 1,\n      \"user\": \"Anshika\",\n      \"homestayId\": 2,\n      \"checkIn\": \"2026-07-20\",\n      \"checkOut\": \"2026-07-22\"\n    },\n    {\n      \"id\": 2,\n      \"user\": \"Rahul\",\n      \"homestayId\": 1,\n      \"checkIn\": \"2026-08-10\",\n      \"checkOut\": \"2026-08-14\"\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "POST Create Booking",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user\": \"Priya\",\n  \"homestayId\": 3,\n  \"checkIn\": \"2026-09-15\",\n  \"checkOut\": \"2026-09-18\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/bookings",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "bookings"]
+            }
+          },
+          "response": [
+            {
+              "name": "Created",
+              "status": "Created",
+              "code": 201,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": 3,\n    \"user\": \"Priya\",\n    \"homestayId\": 3,\n    \"checkIn\": \"2026-09-15\",\n    \"checkOut\": \"2026-09-18\"\n  }\n}"
+            },
+            {
+              "name": "Validation Error",
+              "status": "Bad Request",
+              "code": 400,
+              "body": "{\n  \"success\": false,\n  \"message\": \"Validation Error: user, homestayId, checkIn, and checkOut are required\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "DELETE Booking",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/bookings/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "bookings", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "No Content",
+              "status": "No Content",
+              "code": 204
+            },
+            {
+              "name": "Not Found",
+              "status": "Not Found",
+              "code": 404,
+              "body": "{\n  \"success\": false,\n  \"message\": \"Booking not found\"\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
