@@ -1,12 +1,16 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const connectDB = require('./config/database');
 const errorHandler = require('./middleware/errorHandler');
 const homestayRoutes = require('./routes/homestays');
 const bookingRoutes = require('./routes/bookings');
 
 // Load environment variables
 dotenv.config();
+
+// Connect to MongoDB
+connectDB();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -24,12 +28,14 @@ app.get('/', (req, res) => {
   res.json({
     message: 'Welcome to EcoStay Connect API',
     version: '1.0.0',
+    database: 'MongoDB Atlas',
     endpoints: {
       homestays: '/api/homestays',
       homestayById: '/api/homestays/:id',
       searchHomestays: '/api/homestays/search?q=',
-      bookings: '/api/bookings'
-    }
+      bookings: '/api/bookings',
+      bookingById: '/api/bookings/:id',
+    },
   });
 });
 

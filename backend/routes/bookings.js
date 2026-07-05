@@ -2,8 +2,9 @@ const express = require('express');
 const router = express.Router();
 const {
   getBookings,
+  getBookingById,
   createBooking,
-  deleteBooking
+  deleteBooking,
 } = require('../controllers/bookingController');
 
 router.route('/')
@@ -11,6 +12,7 @@ router.route('/')
   .post(createBooking);
 
 router.route('/:id')
+  .get(getBookingById)
   .delete(deleteBooking);
 
 module.exports = router;
