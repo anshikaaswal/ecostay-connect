@@ -1,11 +1,18 @@
 const Booking = require('../models/Booking');
 const Homestay = require('../models/Homestay');
 
-// @desc    Get all bookings
+// @desc    Get all bookings (users see own, admins see all)
 // @route   GET /api/bookings
 const getBookings = async (req, res) => {
   try {
-    const bookings = await Booking.find().populate('homestay').sort({ createdAt: -1 });
+    let bookings;
+    if (req.user.role === 'admin') {
+      // Admin sees all bookings
+      bookings = await Booking.find().populate('homestay').sort({ createdAt: -1 });
+    } else {
+      // Regular users see only their bookings (by email)
+      bookings = await Booking.find({ email: req.user.email }).populate('homestay').sort({ createdAt: -1 });
+    }
     res.status(200).json({
       success: true,
       count: bookings.length,
@@ -30,6 +37,14 @@ const getBookingById = async (req, res) => {
       return res.status(404).json({
         success: false,
         message: 'Booking not found',
+      });
+    }
+
+    // Ensure users can only see their own bookings
+    if (req.user.role !== 'admin' && booking.email !== req.user.email) {
+      return res.status(403).json({
+        success: false,
+        message: 'Forbidden: You can only view your own bookings',
       });
     }
 
@@ -117,6 +132,14 @@ const deleteBooking = async (req, res) => {
       return res.status(404).json({
         success: false,
         message: 'Booking not found',
+      });
+    }
+
+    // Ensure users can only delete their own bookings (admins can delete any)
+    if (req.user.role !== 'admin' && booking.email !== req.user.email) {
+      return res.status(403).json({
+        success: false,
+        message: 'Forbidden: You can only delete your own bookings',
       });
     }
 

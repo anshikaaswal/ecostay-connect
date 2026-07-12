@@ -1,21 +1,26 @@
 import { useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import { Button, Loader } from '../components/ui'
 import toast from 'react-hot-toast'
 import { getHomestayById, createBooking } from '../services/api'
+import { useAuth } from '../context/AuthContext'
 
 const HomestayDetail = () => {
   const { id } = useParams()
   const [homestay, setHomestay] = useState(null)
   const [loading, setLoading] = useState(true)
   const [booking, setBooking] = useState({
-    user: '',
+    userName: '',
+    email: '',
     checkIn: '',
-    checkOut: ''
+    checkOut: '',
+    guests: 1
   })
   const [bookingLoading, setBookingLoading] = useState(false)
+  const { isAuthenticated, user } = useAuth()
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchHomestay = async () => {
@@ -31,28 +36,49 @@ const HomestayDetail = () => {
     fetchHomestay()
   }, [id])
 
+  // Pre-fill user info if logged in
+  useEffect(() => {
+    if (user) {
+      setBooking(prev => ({
+        ...prev,
+        userName: user.name || '',
+        email: user.email || ''
+      }))
+    }
+  }, [user])
+
   const handleInputChange = (e) => {
-    setBooking({ ...booking, [e.target.name]: e.target.value })
+    const value = e.target.name === 'guests' ? Number(e.target.value) : e.target.value
+    setBooking({ ...booking, [e.target.name]: value })
   }
 
   const handleBookNow = async () => {
-    if (!booking.user || !booking.checkIn || !booking.checkOut) {
-      toast.error('Please fill in all booking fields (Name, Check-in, Check-out)')
+    if (!isAuthenticated) {
+      toast.error('Please login to book a homestay')
+      navigate('/login')
+      return
+    }
+
+    if (!booking.userName || !booking.email || !booking.checkIn || !booking.checkOut) {
+      toast.error('Please fill in all booking fields')
       return
     }
 
     setBookingLoading(true)
     try {
       await createBooking({
-        user: booking.user,
-        homestayId: parseInt(id),
+        userName: booking.userName,
+        email: booking.email,
+        homestayId: id,
         checkIn: booking.checkIn,
-        checkOut: booking.checkOut
+        checkOut: booking.checkOut,
+        guests: booking.guests
       })
       toast.success(`Booking confirmed at ${homestay.name}! Check your dashboard for details.`)
-      setBooking({ user: '', checkIn: '', checkOut: '' })
+      setBooking(prev => ({ ...prev, checkIn: '', checkOut: '', guests: 1 }))
     } catch (error) {
-      toast.error('Booking failed. Please try again.')
+      const msg = error.response?.data?.message || 'Booking failed. Please try again.'
+      toast.error(msg)
     } finally {
       setBookingLoading(false)
     }
@@ -165,9 +191,17 @@ const HomestayDetail = () => {
                 <div className="space-y-4 mb-6">
                   <input
                     type="text"
-                    name="user"
+                    name="userName"
                     placeholder="Your Name"
-                    value={booking.user}
+                    value={booking.userName}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500"
+                  />
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="Your Email"
+                    value={booking.email}
                     onChange={handleInputChange}
                     className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500"
                   />
@@ -185,7 +219,25 @@ const HomestayDetail = () => {
                     onChange={handleInputChange}
                     className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500"
                   />
+                  <div>
+                    <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1">Guests</label>
+                    <input
+                      type="number"
+                      name="guests"
+                      value={booking.guests}
+                      onChange={handleInputChange}
+                      min="1"
+                      max="10"
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    />
+                  </div>
                 </div>
+
+                {!isAuthenticated && (
+                  <p className="text-sm text-amber-600 dark:text-amber-400 mb-3 text-center">
+                    Please <Link to="/login" className="underline font-medium">login</Link> to book
+                  </p>
+                )}
 
                 <Button
                   variant="primary"

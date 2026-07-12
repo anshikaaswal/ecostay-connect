@@ -2,17 +2,36 @@ import { useState } from 'react'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import { Button, Input } from '../components/ui'
-import { showSuccess } from '../components/ui'
+import { showSuccess, showError } from '../components/ui'
+import { useAuth } from '../context/AuthContext'
+import { updateProfile } from '../services/api'
 
 const Settings = () => {
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
+  const { user, setUser } = useAuth()
+  const [name, setName] = useState(user?.name || '')
+  const [email, setEmail] = useState(user?.email || '')
+  const [submitting, setSubmitting] = useState(false)
   const [notifications, setNotifications] = useState(true)
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem('theme') === 'dark')
 
-  const handleSaveProfile = (e) => {
+  const handleSaveProfile = async (e) => {
     e.preventDefault()
-    showSuccess('Profile updated successfully!')
+    setSubmitting(true)
+    try {
+      const res = await updateProfile({ name })
+      setUser({
+        id: res.data.data.id,
+        name: res.data.data.name,
+        email: res.data.data.email,
+        role: res.data.data.role,
+      })
+      showSuccess('Profile updated successfully!')
+    } catch (error) {
+      const msg = error.response?.data?.message || 'Failed to update profile.'
+      showError(msg)
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   const toggleDarkMode = () => {
@@ -57,9 +76,13 @@ const Settings = () => {
                   type="email"
                   placeholder="you@example.com"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  disabled
+                  onChange={() => {}}
                 />
-                <Button type="submit" variant="primary">Save Changes</Button>
+                <p className="text-xs text-gray-500 -mt-3">Email cannot be changed without verification.</p>
+                <Button type="submit" variant="primary" disabled={submitting}>
+                  {submitting ? 'Saving...' : 'Save Changes'}
+                </Button>
               </form>
             </div>
 

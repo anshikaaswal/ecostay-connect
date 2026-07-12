@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [darkMode, setDarkMode] = useState(() => {
     return localStorage.getItem('theme') === 'dark'
   })
+  const { user, isAuthenticated, logout } = useAuth()
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (darkMode) {
@@ -18,6 +21,11 @@ const Navbar = () => {
   }, [darkMode])
 
   const toggleMenu = () => setIsOpen(!isOpen)
+
+  const handleLogout = () => {
+    logout()
+    navigate('/')
+  }
 
   return (
     <nav className="bg-green-800 dark:bg-gray-900 text-white shadow-lg">
@@ -36,9 +44,27 @@ const Navbar = () => {
             <Link to="/" className="hover:text-green-300 dark:hover:text-green-400 transition-colors duration-200 font-medium">Home</Link>
             <Link to="/about" className="hover:text-green-300 dark:hover:text-green-400 transition-colors duration-200 font-medium">About</Link>
             <Link to="/dashboard" className="hover:text-green-300 dark:hover:text-green-400 transition-colors duration-200 font-medium">Dashboard</Link>
+            {isAuthenticated && (
+              <Link to="/my-bookings" className="hover:text-green-300 dark:hover:text-green-400 transition-colors duration-200 font-medium">My Bookings</Link>
+            )}
             <Link to="/settings" className="hover:text-green-300 dark:hover:text-green-400 transition-colors duration-200 font-medium">Settings</Link>
             <Link to="/ai-planner" className="hover:text-green-300 dark:hover:text-green-400 transition-colors duration-200 font-medium">AI Planner</Link>
-            <Link to="/login" className="hover:text-green-300 dark:hover:text-green-400 transition-colors duration-200 font-medium">Login</Link>
+            
+            {isAuthenticated ? (
+              <div className="flex items-center space-x-3">
+                <span className="text-green-200 text-sm">
+                  {user?.name || 'User'}
+                </span>
+                <button
+                  onClick={handleLogout}
+                  className="px-3 py-1.5 bg-red-600 hover:bg-red-700 rounded-lg text-sm font-medium transition-colors cursor-pointer"
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <Link to="/login" className="hover:text-green-300 dark:hover:text-green-400 transition-colors duration-200 font-medium">Login</Link>
+            )}
 
             {/* Theme Toggle */}
             <button
@@ -100,9 +126,21 @@ const Navbar = () => {
           <Link to="/" onClick={() => setIsOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium hover:bg-green-600 dark:hover:bg-gray-700 transition-colors">Home</Link>
           <Link to="/about" onClick={() => setIsOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium hover:bg-green-600 dark:hover:bg-gray-700 transition-colors">About</Link>
           <Link to="/dashboard" onClick={() => setIsOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium hover:bg-green-600 dark:hover:bg-gray-700 transition-colors">Dashboard</Link>
+          {isAuthenticated && (
+            <Link to="/my-bookings" onClick={() => setIsOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium hover:bg-green-600 dark:hover:bg-gray-700 transition-colors">My Bookings</Link>
+          )}
           <Link to="/settings" onClick={() => setIsOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium hover:bg-green-600 dark:hover:bg-gray-700 transition-colors">Settings</Link>
           <Link to="/ai-planner" onClick={() => setIsOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium hover:bg-green-600 dark:hover:bg-gray-700 transition-colors">AI Planner</Link>
-          <Link to="/login" onClick={() => setIsOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium hover:bg-green-600 dark:hover:bg-gray-700 transition-colors">Login</Link>
+          {isAuthenticated ? (
+            <button
+              onClick={() => { handleLogout(); setIsOpen(false) }}
+              className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-red-200 hover:bg-red-700 transition-colors cursor-pointer"
+            >
+              Logout ({user?.name})
+            </button>
+          ) : (
+            <Link to="/login" onClick={() => setIsOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium hover:bg-green-600 dark:hover:bg-gray-700 transition-colors">Login</Link>
+          )}
         </div>
       )}
     </nav>

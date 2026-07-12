@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const Homestay = require('./models/Homestay');
 const Booking = require('./models/Booking');
+const User = require('./models/User');
 
 dotenv.config();
 
@@ -70,11 +71,30 @@ const seedDB = async () => {
     // Clear existing data
     await Homestay.deleteMany({});
     await Booking.deleteMany({});
+    await User.deleteMany({});
     console.log('Cleared existing data...');
 
     // Insert homestays
     const createdHomestays = await Homestay.insertMany(homestays);
     console.log(`Inserted ${createdHomestays.length} homestays`);
+
+    // Create admin user
+    const adminUser = await User.create({
+      name: 'Admin',
+      email: 'admin@ecostay.com',
+      password: 'admin123',
+      role: 'admin',
+    });
+    console.log(`Created admin user: ${adminUser.email} (password: admin123)`);
+
+    // Create regular test user
+    const testUser = await User.create({
+      name: 'Test User',
+      email: 'test@example.com',
+      password: 'test123',
+      role: 'user',
+    });
+    console.log(`Created test user: ${testUser.email} (password: test123)`);
 
     // Create bookings referencing the inserted homestays
     const bookings = [
@@ -97,8 +117,8 @@ const seedDB = async () => {
         status: 'confirmed',
       },
       {
-        userName: 'Priya',
-        email: 'priya@example.com',
+        userName: 'Test User',
+        email: 'test@example.com',
         homestay: createdHomestays[2]._id, // River Side Stay
         checkIn: new Date('2026-09-05'),
         checkOut: new Date('2026-09-08'),
@@ -110,7 +130,11 @@ const seedDB = async () => {
     const createdBookings = await Booking.insertMany(bookings);
     console.log(`Inserted ${createdBookings.length} bookings`);
 
+    console.log('');
     console.log('Database seeded successfully!');
+    console.log('---');
+    console.log('Admin login: admin@ecostay.com / admin123');
+    console.log('Test user login: test@example.com / test123');
     process.exit(0);
   } catch (error) {
     console.error('Seeding error:', error.message);

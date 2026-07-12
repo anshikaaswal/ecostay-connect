@@ -2,53 +2,136 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
-import { Button, Loader } from '../components/ui'
-import toast from 'react-hot-toast'
-import { getBookings, getHomestays } from '../services/api'
+import { Button, Modal, Spinner } from '../components/ui'
+import { showSuccess, showError } from '../components/ui'
+import { getHomestays, createHomestay, updateHomestay, deleteHomestay } from '../services/api'
+import { useAuth } from '../context/AuthContext'
+
+const initialFormState = {
+  name: '',
+  location: '',
+  price: '',
+  rating: '',
+  image: '',
+  description: '',
+  amenities: '',
+}
 
 const Dashboard = () => {
-  const navigate = useNavigate()
-  const [bookings, setBookings] = useState([])
   const [homestays, setHomestays] = useState([])
   const [loading, setLoading] = useState(true)
+  const [modalOpen, setModalOpen] = useState(false)
+  const [formData, setFormData] = useState(initialFormState)
+  const [editingId, setEditingId] = useState(null)
+  const [submitting, setSubmitting] = useState(false)
+  const [deleteConfirm, setDeleteConfirm] = useState(null)
+  const { isAdmin } = useAuth()
+  const navigate = useNavigate()
+
+  const fetchHomestays = async () => {
+    try {
+      setLoading(true)
+      const res = await getHomestays()
+      setHomestays(res.data.data)
+    } catch (error) {
+      showError('Failed to load homestays.')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [bookingsRes, homestaysRes] = await Promise.all([
-          getBookings(),
-          getHomestays()
-        ])
-        setBookings(bookingsRes.data.data)
-        setHomestays(homestaysRes.data.data)
-      } catch (error) {
-        toast.error('Failed to load dashboard data.')
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchData()
+    fetchHomestays()
   }, [])
 
-  const getHomestayName = (homestayId) => {
-    const homestay = homestays.find((h) => h.id === homestayId)
-    return homestay ? homestay.name : 'Unknown Homestay'
+  const openAddModal = () => {
+    if (!isAdmin) {
+      showError('Only admins can add homestays.')
+      return
+    }
+    setEditingId(null)
+    setFormData(initialFormState)
+    setModalOpen(true)
   }
 
-  const getHomestayImage = (homestayId) => {
-    const homestay = homestays.find((h) => h.id === homestayId)
-    return homestay ? homestay.image : ''
+  const openEditModal = (homestay) => {
+    if (!isAdmin) {
+      showError('Only admins can edit homestays.')
+      return
+    }
+    setEditingId(homestay._id)
+    setFormData({
+      name: homestay.name || '',
+      location: homestay.location || '',
+      price: homestay.price?.toString() || '',
+      rating: homestay.rating?.toString() || '',
+      image: homestay.image || '',
+      description: homestay.description || '',
+      amenities: (homestay.amenities || []).join(', '),
+    })
+    setModalOpen(true)
   }
 
-  const upcomingBookings = bookings.filter((b) => new Date(b.checkIn) > new Date())
-  const completedBookings = bookings.filter((b) => new Date(b.checkOut) < new Date())
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value })
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setSubmitting(true)
+
+    const payload = {
+      name: formData.name,
+      location: formData.location,
+      price: Number(formData.price),
+      rating: formData.rating ? Number(formData.rating) : 0,
+      image: formData.image || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600&h=400&fit=crop',
+      description: formData.description,
+      amenities: formData.amenities.split(',').map((a) => a.trim()).filter(Boolean),
+    }
+
+    try {
+      if (editingId) {
+        await updateHomestay(editingId, payload)
+        showSuccess('Homestay updated successfully!')
+      } else {
+        await createHomestay(payload)
+        showSuccess('Homestay created successfully!')
+      }
+      setModalOpen(false)
+      setFormData(initialFormState)
+      setEditingId(null)
+      await fetchHomestays()
+    } catch (error) {
+      const msg = error.response?.data?.message || 'Something went wrong.'
+      showError(msg)
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  const handleDelete = async (id) => {
+    if (!isAdmin) {
+      showError('Only admins can delete homestays.')
+      return
+    }
+    try {
+      await deleteHomestay(id)
+      showSuccess('Homestay deleted successfully!')
+      setDeleteConfirm(null)
+      await fetchHomestays()
+    } catch (error) {
+      const msg = error.response?.data?.message || 'Failed to delete homestay.'
+      showError(msg)
+    }
+  }
 
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
         <Navbar />
         <main className="flex-grow flex items-center justify-center">
-          <Loader size="lg" />
+          <Spinner size="lg" />
         </main>
         <Footer />
       </div>
@@ -63,133 +146,298 @@ const Dashboard = () => {
         {/* Header */}
         <section className="bg-gradient-to-r from-green-700 to-green-600 dark:from-gray-800 dark:to-gray-700 text-white py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h1 className="text-4xl sm:text-5xl font-bold mb-2">Dashboard</h1>
-            <p className="text-green-100 dark:text-gray-300 text-lg">Welcome back! Manage your bookings and explore recommendations.</p>
+            <h1 className="text-4xl sm:text-5xl font-bold mb-2">
+              {isAdmin ? 'Admin Dashboard' : 'Explore Homestays'}
+            </h1>
+            <p className="text-green-100 dark:text-gray-300 text-lg">
+              {isAdmin
+                ? 'Manage homestays — add, edit, or remove listings.'
+                : 'Browse all available eco-friendly homestays.'}
+            </p>
           </div>
         </section>
 
-        {/* Dashboard Content */}
+        {/* Content */}
         <section className="py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Stats Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border-l-4 border-green-500">
-                <p className="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Bookings</p>
-                <p className="text-3xl font-bold text-gray-800 dark:text-gray-200 mt-2">{bookings.length}</p>
-                <p className="text-sm text-green-600 dark:text-green-400 mt-1">Across all homestays</p>
-              </div>
-              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border-l-4 border-teal-500">
-                <p className="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider">Upcoming Stays</p>
-                <p className="text-3xl font-bold text-gray-800 dark:text-gray-200 mt-2">{upcomingBookings.length}</p>
-                <p className="text-sm text-teal-600 dark:text-teal-400 mt-1">
-                  {upcomingBookings.length > 0 ? `Next: ${getHomestayName(upcomingBookings[0].homestayId)}` : 'No upcoming stays'}
-                </p>
-              </div>
-              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border-l-4 border-amber-500">
-                <p className="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider">Homestays Available</p>
-                <p className="text-3xl font-bold text-gray-800 dark:text-gray-200 mt-2">{homestays.length}</p>
-                <p className="text-sm text-amber-600 dark:text-amber-400 mt-1">Eco-friendly stays</p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* Recent Bookings */}
-              <div className="lg:col-span-2 space-y-8">
-                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-8">
-                  <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6">
-                    {bookings.length > 0 ? 'All Bookings' : 'No Bookings Yet'}
-                  </h2>
-                  {bookings.length === 0 ? (
-                    <div className="text-center py-8">
-                      <p className="text-gray-500 dark:text-gray-400 mb-4">You haven't made any bookings yet.</p>
-                      <Button variant="primary" onClick={() => navigate('/')}>
-                        Browse Homestays
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      {bookings.map((booking) => (
-                        <div key={booking.id} className="flex items-center space-x-4 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer"
-                          onClick={() => navigate(`/homestay/${booking.homestayId}`)}
-                        >
-                          {getHomestayImage(booking.homestayId) && (
-                            <img src={getHomestayImage(booking.homestayId)} alt={getHomestayName(booking.homestayId)} className="w-16 h-16 rounded-lg object-cover flex-shrink-0" />
-                          )}
-                          <div className="flex-1 min-w-0">
-                            <p className="font-semibold text-gray-800 dark:text-gray-200 truncate">{getHomestayName(booking.homestayId)}</p>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">{booking.checkIn} to {booking.checkOut}</p>
-                            <p className="text-xs text-gray-400">Booked by: {booking.user}</p>
-                          </div>
-                          <span className={`px-3 py-1 text-xs font-semibold rounded-full ${
-                            new Date(booking.checkOut) < new Date()
-                              ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300'
-                              : 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
-                          }`}>
-                            {new Date(booking.checkOut) < new Date() ? 'Completed' : 'Upcoming'}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+            {/* Stats + Add Button */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-10 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full sm:w-auto">
+                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border-l-4 border-green-500">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Homestays</p>
+                  <p className="text-2xl font-bold text-gray-800 dark:text-gray-200">{homestays.length}</p>
                 </div>
-
-                {/* Recommended Destinations */}
-                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-8">
-                  <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6">Recommended Destinations</h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {homestays.slice(0, 4).map((dest) => (
-                      <div key={dest.id} className="relative rounded-xl overflow-hidden h-40 group cursor-pointer"
-                        onClick={() => navigate(`/homestay/${dest.id}`)}
-                      >
-                        <img src={dest.image} alt={dest.name} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                        <div className="absolute bottom-0 left-0 right-0 p-4">
-                          <p className="text-white font-bold">{dest.name}</p>
-                          <p className="text-white/80 text-sm">{dest.location}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border-l-4 border-teal-500">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">Avg Rating</p>
+                  <p className="text-2xl font-bold text-gray-800 dark:text-gray-200">
+                    {homestays.length > 0
+                      ? (homestays.reduce((sum, h) => sum + (h.rating || 0), 0) / homestays.length).toFixed(1)
+                      : '—'}
+                  </p>
+                </div>
+                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border-l-4 border-amber-500">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">Locations</p>
+                  <p className="text-2xl font-bold text-gray-800 dark:text-gray-200">
+                    {new Set(homestays.map((h) => h.location)).size}
+                  </p>
                 </div>
               </div>
-
-              {/* Saved Homestays & AI Planner */}
-              <div className="space-y-8">
-                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-8">
-                  <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6">All Homestays</h2>
-                  <div className="space-y-4">
-                    {homestays.map((item) => (
-                      <div key={item.id} className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer"
-                        onClick={() => navigate(`/homestay/${item.id}`)}
-                      >
-                        <img src={item.image} alt={item.name} className="w-14 h-14 rounded-lg object-cover flex-shrink-0" />
-                        <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-gray-800 dark:text-gray-200 text-sm truncate">{item.name}</p>
-                          <p className="text-xs text-green-600 dark:text-green-400 font-medium">₹{item.price}/night</p>
-                        </div>
-                        <svg className="w-4 h-4 text-red-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
-                        </svg>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="bg-gradient-to-br from-green-600 to-teal-600 dark:from-gray-700 dark:to-gray-800 rounded-2xl p-8 text-white text-center">
-                  <svg className="w-12 h-12 mx-auto mb-4 text-green-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+              {isAdmin && (
+                <Button variant="primary" size="lg" onClick={openAddModal} className="flex items-center gap-2 whitespace-nowrap">
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
                   </svg>
-                  <h3 className="text-xl font-bold mb-2">Need Help Planning?</h3>
-                  <p className="text-green-100 text-sm mb-4">Try our AI-powered travel planner</p>
-                  <Button variant="secondary" size="sm" onClick={() => navigate('/ai-planner')}>
-                    Plan a Trip
-                  </Button>
-                </div>
-              </div>
+                  Add Homestay
+                </Button>
+              )}
             </div>
+
+            {/* Homestay Cards Grid */}
+            {homestays.length === 0 ? (
+              <div className="text-center py-20">
+                <svg className="w-20 h-20 text-gray-300 dark:text-gray-600 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+                <p className="text-gray-500 dark:text-gray-400 text-lg mb-4">No homestays found.</p>
+                {isAdmin && (
+                  <Button variant="primary" onClick={openAddModal}>Add Your First Homestay</Button>
+                )}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                {homestays.map((homestay) => (
+                  <div
+                    key={homestay._id}
+                    className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden transform transition-all duration-300 hover:shadow-2xl group cursor-pointer"
+                    onClick={() => navigate(`/homestay/${homestay._id}`)}
+                  >
+                    {/* Image */}
+                    <div className="relative h-48 overflow-hidden">
+                      <img
+                        src={homestay.image}
+                        alt={homestay.name}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                      {homestay.rating > 0 && (
+                        <div className="absolute top-3 right-3 bg-white/90 dark:bg-gray-900/90 rounded-full px-3 py-1 text-sm font-bold text-yellow-600 flex items-center gap-1">
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                          </svg>
+                          {homestay.rating}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Content */}
+                    <div className="p-5">
+                      <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-1 truncate">{homestay.name}</h3>
+                      <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-2">
+                        <svg className="w-4 h-4 mr-1 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        {homestay.location}
+                      </div>
+                      <p className="text-2xl font-bold text-green-700 dark:text-green-400 mb-2">₹{homestay.price}/night</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">{homestay.description}</p>
+
+                      {/* Amenities */}
+                      {homestay.amenities && homestay.amenities.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5 mb-4">
+                          {homestay.amenities.slice(0, 3).map((amenity, i) => (
+                            <span key={i} className="px-2 py-0.5 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-xs rounded-full">
+                              {amenity}
+                            </span>
+                          ))}
+                          {homestay.amenities.length > 3 && (
+                            <span className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 text-xs rounded-full">
+                              +{homestay.amenities.length - 3}
+                            </span>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Admin Action Buttons - only for admins */}
+                      {isAdmin && (
+                        <div className="flex gap-3" onClick={(e) => e.stopPropagation()}>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="flex-1 flex items-center justify-center gap-1.5"
+                            onClick={() => openEditModal(homestay)}
+                          >
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                            Edit
+                          </Button>
+                          <Button
+                            variant="primary"
+                            size="sm"
+                            className="flex-1 flex items-center justify-center gap-1.5 !bg-red-600 !hover:bg-red-700"
+                            onClick={() => setDeleteConfirm(homestay)}
+                          >
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                            Delete
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </section>
       </main>
+
+      {/* Add / Edit Modal - only for admins */}
+      {isAdmin && (
+        <>
+          <Modal isOpen={modalOpen} onClose={() => { setModalOpen(false); setEditingId(null); setFormData(initialFormState) }} title={editingId ? 'Edit Homestay' : 'Add Homestay'}>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name *</label>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                  placeholder="e.g. Mountain View Cottage"
+                  className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 outline-none focus:ring-2 focus:ring-green-500 placeholder-gray-400"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Location *</label>
+                <input
+                  type="text"
+                  name="location"
+                  value={formData.location}
+                  onChange={handleChange}
+                  required
+                  placeholder="e.g. Nainital"
+                  className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 outline-none focus:ring-2 focus:ring-green-500 placeholder-gray-400"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Price (₹) *</label>
+                  <input
+                    type="number"
+                    name="price"
+                    value={formData.price}
+                    onChange={handleChange}
+                    required
+                    min="0"
+                    placeholder="e.g. 2500"
+                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 outline-none focus:ring-2 focus:ring-green-500 placeholder-gray-400"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Rating</label>
+                  <input
+                    type="number"
+                    name="rating"
+                    value={formData.rating}
+                    onChange={handleChange}
+                    min="0"
+                    max="5"
+                    step="0.1"
+                    placeholder="e.g. 4.5"
+                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 outline-none focus:ring-2 focus:ring-green-500 placeholder-gray-400"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Image URL</label>
+                <input
+                  type="url"
+                  name="image"
+                  value={formData.image}
+                  onChange={handleChange}
+                  placeholder="https://images.unsplash.com/..."
+                  className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 outline-none focus:ring-2 focus:ring-green-500 placeholder-gray-400"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
+                <textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  rows={3}
+                  placeholder="Describe the homestay..."
+                  className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 outline-none focus:ring-2 focus:ring-green-500 placeholder-gray-400 resize-none"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Amenities (comma separated)</label>
+                <input
+                  type="text"
+                  name="amenities"
+                  value={formData.amenities}
+                  onChange={handleChange}
+                  placeholder="WiFi, Parking, Breakfast, Trekking"
+                  className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 outline-none focus:ring-2 focus:ring-green-500 placeholder-gray-400"
+                />
+              </div>
+              <div className="flex gap-3 pt-2">
+                <Button type="submit" variant="primary" size="md" className="flex-1" disabled={submitting}>
+                  {submitting ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <Spinner size="sm" />
+                      {editingId ? 'Updating...' : 'Creating...'}
+                    </span>
+                  ) : (
+                    editingId ? 'Update Homestay' : 'Create Homestay'
+                  )}
+                </Button>
+                <Button type="button" variant="secondary" size="md" onClick={() => { setModalOpen(false); setEditingId(null); setFormData(initialFormState) }}>
+                  Cancel
+                </Button>
+              </div>
+            </form>
+          </Modal>
+
+          {/* Delete Confirmation Modal */}
+          <Modal
+            isOpen={!!deleteConfirm}
+            onClose={() => setDeleteConfirm(null)}
+            title="Confirm Delete"
+          >
+            <div className="text-center py-4">
+              <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+              </div>
+              <p className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
+                Are you sure you want to delete this homestay?
+              </p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+                "{deleteConfirm?.name}" will be permanently removed. This action cannot be undone.
+              </p>
+              <div className="flex gap-3">
+                <Button
+                  variant="primary"
+                  size="md"
+                  className="flex-1 !bg-red-600 !hover:bg-red-700"
+                  onClick={() => handleDelete(deleteConfirm._id)}
+                >
+                  Yes, Delete
+                </Button>
+                <Button variant="secondary" size="md" className="flex-1" onClick={() => setDeleteConfirm(null)}>
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          </Modal>
+        </>
+      )}
 
       <Footer />
     </div>

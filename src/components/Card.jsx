@@ -15,7 +15,7 @@ const Card = ({ image, title, description, id }) => {
     <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-[1.03] hover:shadow-2xl group cursor-pointer"
       onClick={() => navigate(`/homestay/${id}`)}
     >
-      {/* Image */}
+      
       <div className="relative h-56 overflow-hidden">
         <img
           src={image}
@@ -25,7 +25,7 @@ const Card = ({ image, title, description, id }) => {
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
       </div>
 
-      {/* Content */}
+      
       <div className="p-6">
         <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-3 group-hover:text-green-700 dark:group-hover:text-green-400 transition-colors">
           {title}

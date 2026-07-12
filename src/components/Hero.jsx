@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { Link } from 'react-router-dom'
 
 // Import all hero background images
 import hero1 from '../assets/hero/hero1.jpg'
@@ -94,18 +95,18 @@ const Hero = () => {
             in nature, connect with local communities, and leave a positive footprint on the planet.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
-            <a
-              href="/dashboard"
+            <Link
+              to="/dashboard"
               className="inline-block px-8 py-4 bg-white text-green-800 font-bold text-lg rounded-full shadow-lg hover:bg-green-50 hover:shadow-xl hover:scale-105 transition-all duration-300 text-center"
             >
               Explore Stays
-            </a>
-            <a
-              href="/about"
+            </Link>
+            <Link
+              to="/about"
               className="inline-block px-8 py-4 bg-transparent border-2 border-white text-white font-bold text-lg rounded-full hover:bg-white hover:text-green-800 hover:scale-105 transition-all duration-300 text-center"
             >
               Learn More
-            </a>
+            </Link>
           </div>
         </div>
       </div>

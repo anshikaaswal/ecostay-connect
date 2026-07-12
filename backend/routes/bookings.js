@@ -6,13 +6,15 @@ const {
   createBooking,
   deleteBooking,
 } = require('../controllers/bookingController');
+const { protect, adminOnly } = require('../middleware/authMiddleware');
 
+// Protected routes (require authentication)
 router.route('/')
-  .get(getBookings)
-  .post(createBooking);
+  .get(protect, getBookings)
+  .post(protect, createBooking);
 
 router.route('/:id')
-  .get(getBookingById)
-  .delete(deleteBooking);
+  .get(protect, getBookingById)
+  .delete(protect, deleteBooking);
 
 module.exports = router;

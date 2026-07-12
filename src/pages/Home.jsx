@@ -60,8 +60,8 @@ const Home = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {homestays.slice(0, 6).map((stay) => (
                 <Card
-                  key={stay.id}
-                  id={stay.id}
+                  key={stay._id}
+                  id={stay._id}
                   image={stay.image}
                   title={stay.name}
                   description={stay.description}
