@@ -4,12 +4,13 @@ const dotenv = require('dotenv');
 
 // Load environment variables FIRST
 dotenv.config();
-
+console.log("Gemini Key Loaded:", process.env.GEMINI_API_KEY);
 const connectDB = require('./config/database');
 const errorHandler = require('./middleware/errorHandler');
 const homestayRoutes = require('./routes/homestays');
 const bookingRoutes = require('./routes/bookings');
 const authRoutes = require('./routes/auth');
+const aiRoutes = require('./routes/ai');
 const passport = require('passport');
 require('./config/passport')(passport);
 
@@ -65,6 +66,7 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
 app.use('/api/auth', authRoutes);
 app.use('/api/homestays', homestayRoutes);
 app.use('/api/bookings', bookingRoutes);
+app.use('/api/ai', aiRoutes);
 
 // Root route
 app.get('/', (req, res) => {
@@ -79,6 +81,7 @@ app.get('/', (req, res) => {
       searchHomestays: '/api/homestays/search?q=',
       bookings: '/api/bookings',
       bookingById: '/api/bookings/:id',
+      aiPlanner: '/api/ai/planner',
     },
   });
 });

@@ -55,4 +55,7 @@ export const loginUser = (data) => api.post('/auth/login', data);
 export const getMe = () => api.get('/auth/me');
 export const updateProfile = (data) => api.put('/auth/profile', data);
 
+// AI Planner API
+export const generateTravelPlan = (data) => api.post('/ai/planner', data);
+
 export default api;

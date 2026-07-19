@@ -11,6 +11,7 @@ A full-stack **Homestay & Eco-Tourism Platform** built with React, Node.js, Expr
 | **Database** | MongoDB Atlas (NoSQL) |
 | **ODM** | Mongoose 9 |
 | **Authentication** | JWT + bcryptjs + Passport.js (Google OAuth) |
+| **AI** | Google Gemini API (`@google/generative-ai`) |
 
 ## Why MongoDB?
 
@@ -62,11 +63,13 @@ ecostay-connect/
 │   ├── controllers/
 │   │   ├── homestayController.js
 │   │   ├── bookingController.js
-│   │   └── authController.js    # Register, Login, GetMe
+│   │   ├── authController.js    # Register, Login, GetMe
+│   │   └── aiController.js      # Gemini AI travel planner
 │   ├── routes/
 │   │   ├── homestays.js
 │   │   ├── bookings.js
-│   │   └── auth.js
+│   │   ├── auth.js
+│   │   └── ai.js                # POST /api/ai/planner
 │   ├── middleware/
 │   │   ├── errorHandler.js
 │   │   ├── authMiddleware.js    # JWT protect + adminOnly
@@ -239,6 +242,7 @@ Frontend runs on `http://localhost:5173`
 | `GOOGLE_CLIENT_ID` | No | Google OAuth client ID |
 | `GOOGLE_CLIENT_SECRET` | No | Google OAuth client secret |
 | `GOOGLE_CALLBACK_URL` | No | Google OAuth callback URL |
+| `GEMINI_API_KEY` | Yes (for AI) | Google Gemini API key for AI Travel Planner |
 
 ## Features
 
@@ -312,6 +316,81 @@ GET /api/auth/me
   "message": "Too many attempts, please try again after 15 minutes"
 }
 ```
+
+## AI Travel Planner
+
+### Backend AI Integration
+
+| Feature | Implementation |
+|---------|---------------|
+| **AI Model** | Google Gemini 2.0 Flash (`@google/generative-ai`) |
+| **Endpoint** | `POST /api/ai/planner` |
+| **Input** | destination, days, budget, travelStyle |
+| **Output** | Day-wise itinerary, food recommendations, eco-tips, summary |
+| **Prompt Engineering** | Role-based prompt with strict JSON enforcement (see `PROMPTS.md`) |
+
+### API Endpoint
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| POST | `/api/ai/planner` | No | Generate AI travel plan |
+
+#### Example Request
+```json
+POST /api/ai/planner
+{
+  "destination": "Manali, India",
+  "days": 3,
+  "budget": "moderate",
+  "travelStyle": "adventure"
+}
+```
+
+#### Example Response
+```json
+{
+  "success": true,
+  "data": {
+    "destination": "Manali, India",
+    "days": 3,
+    "budget": "moderate",
+    "travelStyle": "adventure",
+    "itinerary": [
+      {
+        "day": 1,
+        "title": "Arrival & Local Exploration",
+        "morning": "Morning activity description",
+        "afternoon": "Afternoon activity description",
+        "evening": "Evening activity description",
+        "dailyBudget": "₹2,500 - ₹3,000"
+      }
+    ],
+    "foodRecommendations": ["Local food 1", "Local food 2"],
+    "ecoFriendlyTips": ["Eco tip 1", "Eco tip 2"],
+    "travelSummary": "A summary of the trip."
+  }
+}
+```
+
+### Frontend AI Planner
+
+- **Page**: `src/pages/AIPlanner.jsx` — Input form + results display
+- **API Service**: `src/services/api.js` — `generateTravelPlan()` function
+- **Loading**: Uses existing `Loader` component with disabled button
+- **Errors**: Toast notifications via `showError()` on failure
+
+### Setup
+
+1. Get a Gemini API key from [Google AI Studio](https://aistudio.google.com/apikey)
+2. Add it to `backend/.env`:
+   ```env
+   GEMINI_API_KEY=your_gemini_api_key_here
+   ```
+3. Restart the backend server
+
+### Prompt Engineering
+
+See `PROMPTS.md` for detailed prompt engineering documentation, including three prompt versions and why role-based prompting with strict JSON enforcement gives the best results.
 
 ## Files Created/Modified (Week 6)
 

@@ -270,6 +270,60 @@
           ]
         }
       ]
+    },
+    {
+      "name": "AI Planner",
+      "item": [
+        {
+          "name": "POST Generate Travel Plan",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"destination\": \"Manali, India\",\n  \"days\": 3,\n  \"budget\": \"moderate\",\n  \"travelStyle\": \"adventure\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/ai/planner",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "ai", "planner"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"destination\": \"Manali, India\",\n    \"days\": 3,\n    \"budget\": \"moderate\",\n    \"travelStyle\": \"adventure\",\n    \"itinerary\": [\n      {\n        \"day\": 1,\n        \"title\": \"Arrival & Local Exploration\",\n        \"morning\": \"Arrive in Manali and check into an eco-friendly homestay. Take a leisurely walk to acclimatize to the altitude.\",\n        \"afternoon\": \"Visit the Hadimba Temple and explore the local markets for sustainable souvenirs.\",\n        \"evening\": \"Enjoy a traditional Himachali dinner at a local dhaba. Try Siddu and Dham.\",\n        \"dailyBudget\": \"₹2,500 - ₹3,000\"\n      },\n      {\n        \"day\": 2,\n        \"title\": \"Adventure Day\",\n        \"morning\": \"Trek to Jogini Falls with a local guide. Enjoy the pristine natural surroundings.\",\n        \"afternoon\": \"River crossing and rappelling session. Pack a zero-waste picnic lunch.\",\n        \"evening\": \"Bonfire at the homestay with organic snacks. Stargazing session.\",\n        \"dailyBudget\": \"₹3,000 - ₹3,500\"\n      },\n      {\n        \"day\": 3,\n        \"title\": \"Nature & Departure\",\n        \"morning\": \"Visit Solang Valley for paragliding or simply enjoy the panoramic views.\",\n        \"afternoon\": \"Lunch at a farm-to-table cafe. Visit the Manali Sanctuary for a short nature walk.\",\n        \"evening\": \"Depart from Manali with memories of a sustainable adventure trip.\",\n        \"dailyBudget\": \"₹2,000 - ₹2,500\"\n      }\n    ],\n    \"foodRecommendations\": [\n      \"Siddu - A steamed wheat bread stuffed with poppy seeds, a local delicacy\",\n      \"Dham - A traditional Himachali thali served on a leaf plate\",\n      \"Babru - A Himachali version of kachori made with black gram dal\",\n      \"Chha Gosht - A yogurt-based mutton curry with mild spices\"\n    ],\n    \"ecoFriendlyTips\": [\n      \"Carry a reusable water bottle and avoid single-use plastics\",\n      \"Choose homestays that use solar power and practice waste segregation\",\n      \"Support local artisans by buying handmade souvenirs instead of mass-produced items\",\n      \"Use public transport or shared cabs to reduce your carbon footprint\"\n    ],\n    \"travelSummary\": \"This 3-day adventure trip to Manali combines thrilling outdoor activities with eco-conscious travel. From trekking to Jogini Falls and paragliding in Solang Valley to savoring authentic Himachali cuisine, every experience is designed to minimize environmental impact while maximizing connection with nature. Stay in eco-friendly homestays, support local communities, and leave only footprints behind.\"\n  }\n}"
+            },
+            {
+              "name": "Validation Error",
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Please provide destination, days, budget, and travelStyle\"\n}"
+            },
+            {
+              "name": "Server Error",
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Unable to generate travel plan. Please try again.\"\n}"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
