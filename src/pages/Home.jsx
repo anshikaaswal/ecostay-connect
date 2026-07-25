@@ -8,13 +8,6 @@ import { Button, Loader } from '../components/ui'
 import toast from 'react-hot-toast'
 import { getHomestays } from '../services/api'
 
-const popularDestinations = [
-  { name: 'Himachal Pradesh', image: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?w=600&h=400&fit=crop', stays: '12 Eco Stays' },
-  { name: 'Kerala', image: 'https://images.unsplash.com/photo-1593693397690-362cb9666fc2?w=600&h=400&fit=crop', stays: '8 Eco Stays' },
-  { name: 'Rishikesh', image: 'https://images.unsplash.com/photo-1500534623283-312aade485b7?w=600&h=400&fit=crop', stays: '6 Eco Stays' },
-  { name: 'Coorg', image: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?w=600&h=400&fit=crop', stays: '5 Eco Stays' },
-]
-
 const Home = () => {
   const navigate = useNavigate()
   const [homestays, setHomestays] = useState([])
@@ -33,6 +26,23 @@ const Home = () => {
     }
     fetchHomestays()
   }, [])
+
+  // Derive popular destinations from actual homestay data
+  const popularDestinations = homestays.reduce((acc, h) => {
+    const location = h.location?.trim()
+    if (!location) return acc
+    const existing = acc.find(d => d.name === location)
+    if (existing) {
+      existing.stays = `${parseInt(existing.stays) + 1} Eco Stays`
+    } else {
+      acc.push({
+        name: location,
+        image: h.image || 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?w=600&h=400&fit=crop',
+        stays: '1 Eco Stay'
+      })
+    }
+    return acc
+  }, []).slice(0, 4)
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -55,6 +65,16 @@ const Home = () => {
           {loading ? (
             <div className="flex justify-center py-12">
               <Loader />
+            </div>
+          ) : homestays.length === 0 ? (
+            <div className="text-center py-12">
+              <svg className="w-20 h-20 text-gray-300 dark:text-gray-600 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+              </svg>
+              <p className="text-gray-500 dark:text-gray-400 text-lg mb-4">No Homestays Available</p>
+              <Button variant="primary" onClick={() => navigate('/dashboard')}>
+                Browse All Stays
+              </Button>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -83,40 +103,43 @@ const Home = () => {
       </section>
 
       {/* Popular Destinations Section */}
-      <section className="py-16 bg-white dark:bg-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 dark:text-gray-200 mb-4">
-              Popular Destinations
-            </h2>
-            <div className="w-20 h-1 bg-green-600 mx-auto rounded-full mb-4"></div>
-            <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-lg">
-              Explore top eco-tourism destinations across India
-            </p>
-          </div>
+      {popularDestinations.length > 0 && (
+        <section className="py-16 bg-white dark:bg-gray-800">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 dark:text-gray-200 mb-4">
+                Popular Destinations
+              </h2>
+              <div className="w-20 h-1 bg-green-600 mx-auto rounded-full mb-4"></div>
+              <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-lg">
+                Explore top eco-tourism destinations across India
+              </p>
+            </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {popularDestinations.map((dest, index) => (
-              <div
-                key={index}
-                className="relative rounded-2xl overflow-hidden group cursor-pointer h-64"
-                onClick={() => navigate('/ai-planner')}
-              >
-                <img
-                  src={dest.image}
-                  alt={dest.name}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-5">
-                  <h3 className="text-xl font-bold text-white">{dest.name}</h3>
-                  <p className="text-white/80 text-sm">{dest.stays}</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {popularDestinations.map((dest, index) => (
+                <div
+                  key={index}
+                  className="relative rounded-2xl overflow-hidden group cursor-pointer h-64"
+                  onClick={() => navigate('/ai-planner')}
+                >
+                  <img
+                    src={dest.image}
+                    alt={dest.name}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-5">
+                    <h3 className="text-xl font-bold text-white">{dest.name}</h3>
+                    <p className="text-white/80 text-sm">{dest.stays}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* AI Travel Assistant Section */}
       <section className="py-16 bg-green-700 dark:bg-gray-900 text-white">

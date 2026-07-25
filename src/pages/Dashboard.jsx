@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import { Button, Modal, Spinner } from '../components/ui'
 import { showSuccess, showError } from '../components/ui'
-import { getHomestays, createHomestay, updateHomestay, deleteHomestay } from '../services/api'
+import { getHomestays, createHomestay, updateHomestay, deleteHomestay, getBookings } from '../services/api'
 import { useAuth } from '../context/AuthContext'
 
 const initialFormState = {
@@ -19,16 +19,18 @@ const initialFormState = {
 
 const Dashboard = () => {
   const [homestays, setHomestays] = useState([])
+  const [bookings, setBookings] = useState([])
   const [loading, setLoading] = useState(true)
+  const [bookingsLoading, setBookingsLoading] = useState(true)
   const [modalOpen, setModalOpen] = useState(false)
   const [formData, setFormData] = useState(initialFormState)
   const [editingId, setEditingId] = useState(null)
   const [submitting, setSubmitting] = useState(false)
   const [deleteConfirm, setDeleteConfirm] = useState(null)
-  const { isAdmin } = useAuth()
+  const { isAdmin, isAuthenticated, user } = useAuth()
   const navigate = useNavigate()
 
-  const fetchHomestays = async () => {
+  const fetchHomestays = useCallback(async () => {
     try {
       setLoading(true)
       const res = await getHomestays()
@@ -38,11 +40,29 @@ const Dashboard = () => {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
+
+  const fetchBookings = useCallback(async () => {
+    try {
+      setBookingsLoading(true)
+      const res = await getBookings()
+      setBookings(res.data.data)
+    } catch (error) {
+      // Silently fail for non-admin users who may not have bookings
+      setBookings([])
+    } finally {
+      setBookingsLoading(false)
+    }
+  }, [])
 
   useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/login')
+      return
+    }
     fetchHomestays()
-  }, [])
+    fetchBookings()
+  }, [isAuthenticated, navigate, fetchHomestays, fetchBookings])
 
   const openAddModal = () => {
     if (!isAdmin) {
@@ -126,6 +146,14 @@ const Dashboard = () => {
     }
   }
 
+  const formatDate = (dateStr) => {
+    return new Date(dateStr).toLocaleDateString('en-IN', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    })
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
@@ -147,13 +175,24 @@ const Dashboard = () => {
         <section className="bg-gradient-to-r from-green-700 to-green-600 dark:from-gray-800 dark:to-gray-700 text-white py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h1 className="text-4xl sm:text-5xl font-bold mb-2">
-              {isAdmin ? 'Admin Dashboard' : 'Explore Homestays'}
+              {isAdmin ? 'Admin Dashboard' : 'My Dashboard'}
             </h1>
             <p className="text-green-100 dark:text-gray-300 text-lg">
               {isAdmin
                 ? 'Manage homestays — add, edit, or remove listings.'
-                : 'Browse all available eco-friendly homestays.'}
+                : 'Welcome back, explore and manage your eco-stay experience.'}
             </p>
+            {user && (
+              <div className="mt-4 flex items-center gap-3 bg-white/10 rounded-xl px-5 py-3 w-fit">
+                <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                  {user.name?.charAt(0)?.toUpperCase() || 'U'}
+                </div>
+                <div>
+                  <p className="font-semibold">{user.name}</p>
+                  <p className="text-sm text-green-200">{user.email}</p>
+                </div>
+              </div>
+            )}
           </div>
         </section>
 
@@ -176,10 +215,8 @@ const Dashboard = () => {
                   </p>
                 </div>
                 <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border-l-4 border-amber-500">
-                  <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">Locations</p>
-                  <p className="text-2xl font-bold text-gray-800 dark:text-gray-200">
-                    {new Set(homestays.map((h) => h.location)).size}
-                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">My Bookings</p>
+                  <p className="text-2xl font-bold text-gray-800 dark:text-gray-200">{bookings.length}</p>
                 </div>
               </div>
               {isAdmin && (
@@ -198,7 +235,7 @@ const Dashboard = () => {
                 <svg className="w-20 h-20 text-gray-300 dark:text-gray-600 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                 </svg>
-                <p className="text-gray-500 dark:text-gray-400 text-lg mb-4">No homestays found.</p>
+                <p className="text-gray-500 dark:text-gray-400 text-lg mb-4">No Homestays Available</p>
                 {isAdmin && (
                   <Button variant="primary" onClick={openAddModal}>Add Your First Homestay</Button>
                 )}
@@ -217,6 +254,7 @@ const Dashboard = () => {
                         src={homestay.image}
                         alt={homestay.name}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        loading="lazy"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
                       {homestay.rating > 0 && (
@@ -288,6 +326,79 @@ const Dashboard = () => {
                     </div>
                   </div>
                 ))}
+              </div>
+            )}
+
+            {/* My Bookings Section */}
+            {!isAdmin && (
+              <div className="mt-16">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200">My Bookings</h2>
+                  {bookings.length > 0 && (
+                    <Button variant="outline" size="sm" onClick={() => navigate('/my-bookings')}>
+                      View All
+                    </Button>
+                  )}
+                </div>
+
+                {bookingsLoading ? (
+                  <div className="flex justify-center py-8">
+                    <Spinner size="md" />
+                  </div>
+                ) : bookings.length === 0 ? (
+                  <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-2xl shadow-md">
+                    <svg className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <p className="text-gray-500 dark:text-gray-400 text-lg mb-2">No Bookings Yet</p>
+                    <p className="text-gray-400 dark:text-gray-500 text-sm mb-4">Start exploring and book your first eco-stay!</p>
+                    <Button variant="primary" onClick={() => navigate('/dashboard')}>
+                      Browse Homestays
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {bookings.slice(0, 3).map((booking) => (
+                      <div
+                        key={booking._id}
+                        className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+                      >
+                        <div className="h-36 overflow-hidden">
+                          <img
+                            src={booking.homestay?.image || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600&h=400&fit=crop'}
+                            alt={booking.homestay?.name || 'Homestay'}
+                            className="w-full h-full object-cover"
+                            loading="lazy"
+                          />
+                        </div>
+                        <div className="p-4">
+                          <h3 className="font-bold text-gray-800 dark:text-gray-200 truncate">
+                            {booking.homestay?.name || 'Unknown Homestay'}
+                          </h3>
+                          <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                            {booking.homestay?.location || ''}
+                          </p>
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-gray-600 dark:text-gray-400">
+                              {formatDate(booking.checkIn)} - {formatDate(booking.checkOut)}
+                            </span>
+                            <span
+                              className={`px-2 py-0.5 rounded-full text-xs font-bold uppercase ${
+                                booking.status === 'confirmed'
+                                  ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
+                                  : booking.status === 'cancelled'
+                                    ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300'
+                                    : 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300'
+                              }`}
+                            >
+                              {booking.status || 'Confirmed'}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
           </div>

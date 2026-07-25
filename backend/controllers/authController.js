@@ -2,9 +2,11 @@ const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
 
-// Generate JWT token
-const generateToken = (userId) => {
-  return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'anshikaaswal687@gmail.com';
+
+// Generate JWT token with role
+const generateToken = (userId, role) => {
+  return jwt.sign({ id: userId, role }, process.env.JWT_SECRET, {
     expiresIn: '7d',
   });
 };
@@ -34,8 +36,11 @@ const register = async (req, res) => {
       });
     }
 
+    // Auto-assign admin role for the admin email
+    const role = email.toLowerCase() === ADMIN_EMAIL.toLowerCase() ? 'admin' : 'user';
+
     // Create user (password is hashed by the model's pre-save hook)
-    const user = await User.create({ name, email, password });
+    const user = await User.create({ name, email, password, role });
 
     res.status(201).json({
       success: true,
@@ -98,8 +103,8 @@ const login = async (req, res) => {
       });
     }
 
-    // Generate token
-    const token = generateToken(user._id);
+    // Generate token with role
+    const token = generateToken(user._id, user.role);
 
     res.status(200).json({
       success: true,

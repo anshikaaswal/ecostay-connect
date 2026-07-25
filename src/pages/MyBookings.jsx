@@ -1,27 +1,21 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import { Button, Spinner } from '../components/ui'
 import { showSuccess, showError } from '../components/ui'
+import ConfirmModal from '../components/ConfirmModal'
 import { getBookings, deleteBooking } from '../services/api'
 import { useAuth } from '../context/AuthContext'
 
 const MyBookings = () => {
   const [bookings, setBookings] = useState([])
   const [loading, setLoading] = useState(true)
-  const { isAuthenticated, user } = useAuth()
+  const [deleteModal, setDeleteModal] = useState(null)
+  const { isAuthenticated } = useAuth()
   const navigate = useNavigate()
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      navigate('/login')
-      return
-    }
-    fetchBookings()
-  }, [isAuthenticated, navigate])
-
-  const fetchBookings = async () => {
+  const fetchBookings = useCallback(async () => {
     try {
       setLoading(true)
       const res = await getBookings()
@@ -31,13 +25,21 @@ const MyBookings = () => {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/login')
+      return
+    }
+    fetchBookings()
+  }, [isAuthenticated, navigate, fetchBookings])
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to cancel this booking?')) return
     try {
       await deleteBooking(id)
       setBookings(bookings.filter(b => b._id !== id))
+      setDeleteModal(null)
       showSuccess('Booking cancelled successfully!')
     } catch (error) {
       const msg = error.response?.data?.message || 'Failed to cancel booking.'
@@ -88,7 +90,10 @@ const MyBookings = () => {
                 <svg className="w-20 h-20 text-gray-300 dark:text-gray-600 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
-                <p className="text-gray-500 dark:text-gray-400 text-lg mb-4">No bookings found.</p>
+                <p className="text-gray-500 dark:text-gray-400 text-lg mb-2">No Bookings Yet</p>
+                <p className="text-gray-400 dark:text-gray-500 text-sm mb-6">
+                  You haven't booked any homestays yet. Start exploring eco-friendly stays!
+                </p>
                 <Button variant="primary" onClick={() => navigate('/dashboard')}>
                   Browse Homestays
                 </Button>
@@ -107,6 +112,7 @@ const MyBookings = () => {
                           src={booking.homestay?.image || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600&h=400&fit=crop'}
                           alt={booking.homestay?.name || 'Homestay'}
                           className="w-full h-full object-cover"
+                          loading="lazy"
                         />
                       </div>
 
@@ -173,7 +179,7 @@ const MyBookings = () => {
                             variant="primary"
                             size="sm"
                             className="!bg-red-600 !hover:bg-red-700"
-                            onClick={() => handleDelete(booking._id)}
+                            onClick={() => setDeleteModal(booking)}
                           >
                             Cancel Booking
                           </Button>
@@ -187,6 +193,16 @@ const MyBookings = () => {
           </div>
         </section>
       </main>
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={!!deleteModal}
+        onClose={() => setDeleteModal(null)}
+        onConfirm={() => handleDelete(deleteModal._id)}
+        title="Cancel Booking"
+        message={`Are you sure you want to cancel your booking at "${deleteModal?.homestay?.name || 'Unknown Homestay'}"?`}
+        confirmText="Yes, Cancel Booking"
+      />
 
       <Footer />
     </div>
