@@ -7,14 +7,12 @@ import { showSuccess, showError } from '../components/ui'
 import ConfirmModal from '../components/ConfirmModal'
 import { getBookings, deleteBooking } from '../services/api'
 import { useAuth } from '../context/AuthContext'
-
 const MyBookings = () => {
   const [bookings, setBookings] = useState([])
   const [loading, setLoading] = useState(true)
   const [deleteModal, setDeleteModal] = useState(null)
   const { isAuthenticated } = useAuth()
   const navigate = useNavigate()
-
   const fetchBookings = useCallback(async () => {
     try {
       setLoading(true)
@@ -26,7 +24,6 @@ const MyBookings = () => {
       setLoading(false)
     }
   }, [])
-
   useEffect(() => {
     if (!isAuthenticated) {
       navigate('/login')
@@ -34,7 +31,6 @@ const MyBookings = () => {
     }
     fetchBookings()
   }, [isAuthenticated, navigate, fetchBookings])
-
   const handleDelete = async (id) => {
     try {
       await deleteBooking(id)
@@ -46,7 +42,6 @@ const MyBookings = () => {
       showError(msg)
     }
   }
-
   const formatDate = (dateStr) => {
     return new Date(dateStr).toLocaleDateString('en-IN', {
       year: 'numeric',
@@ -54,7 +49,6 @@ const MyBookings = () => {
       day: 'numeric',
     })
   }
-
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
@@ -66,13 +60,11 @@ const MyBookings = () => {
       </div>
     )
   }
-
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
       <Navbar />
-
       <main className="flex-grow">
-        {/* Header */}
+        {}
         <section className="bg-gradient-to-r from-green-700 to-green-600 dark:from-gray-800 dark:to-gray-700 text-white py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h1 className="text-4xl sm:text-5xl font-bold mb-2">My Bookings</h1>
@@ -81,8 +73,7 @@ const MyBookings = () => {
             </p>
           </div>
         </section>
-
-        {/* Content */}
+        {}
         <section className="py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {bookings.length === 0 ? (
@@ -106,7 +97,7 @@ const MyBookings = () => {
                     className="bg-white dark:bg-gray-800 rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition-shadow"
                   >
                     <div className="flex flex-col md:flex-row">
-                      {/* Homestay Image */}
+                      {}
                       <div className="md:w-64 h-48 md:h-auto">
                         <img
                           src={booking.homestay?.image || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600&h=400&fit=crop'}
@@ -115,8 +106,7 @@ const MyBookings = () => {
                           loading="lazy"
                         />
                       </div>
-
-                      {/* Booking Details */}
+                      {}
                       <div className="flex-1 p-6">
                         <div className="flex items-start justify-between mb-4">
                           <div>
@@ -139,7 +129,6 @@ const MyBookings = () => {
                             {booking.status || 'Confirmed'}
                           </span>
                         </div>
-
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                           <div>
                             <p className="text-xs text-gray-500 dark:text-gray-400 uppercase">Check-in</p>
@@ -166,7 +155,6 @@ const MyBookings = () => {
                             </p>
                           </div>
                         </div>
-
                         <div className="flex gap-3">
                           <Button
                             variant="outline"
@@ -193,8 +181,7 @@ const MyBookings = () => {
           </div>
         </section>
       </main>
-
-      {/* Delete Confirmation Modal */}
+      {}
       <ConfirmModal
         isOpen={!!deleteModal}
         onClose={() => setDeleteModal(null)}
@@ -203,10 +190,8 @@ const MyBookings = () => {
         message={`Are you sure you want to cancel your booking at "${deleteModal?.homestay?.name || 'Unknown Homestay'}"?`}
         confirmText="Yes, Cancel Booking"
       />
-
       <Footer />
     </div>
   )
 }
-
 export default MyBookings

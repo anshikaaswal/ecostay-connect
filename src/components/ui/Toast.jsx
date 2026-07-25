@@ -1,5 +1,4 @@
 import toast from 'react-hot-toast'
-
 const showSuccess = (message) => toast.success(message, {
   style: {
     background: '#065f46',
@@ -14,7 +13,6 @@ const showSuccess = (message) => toast.success(message, {
     secondary: '#065f46',
   },
 })
-
 const showError = (message) => toast.error(message, {
   style: {
     background: '#991b1b',
@@ -29,7 +27,6 @@ const showError = (message) => toast.error(message, {
     secondary: '#991b1b',
   },
 })
-
 const showInfo = (message) => toast(message, {
   style: {
     background: '#1e3a5f',
@@ -41,5 +38,4 @@ const showInfo = (message) => toast(message, {
   },
   icon: 'ℹ️',
 })
-
 export { showSuccess, showError, showInfo }

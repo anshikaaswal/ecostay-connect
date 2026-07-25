@@ -6,7 +6,6 @@ import { useAuth } from '../context/AuthContext'
 import { registerUser } from '../services/api'
 import api from '../services/api'
 import { showSuccess, showError } from '../components/ui'
-
 const Login = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -18,8 +17,6 @@ const Login = () => {
   const [configLoaded, setConfigLoaded] = useState(false)
   const { login, isAuthenticated, isAdmin, handleOAuthToken } = useAuth()
   const navigate = useNavigate()
-
-  // Fetch OAuth config
   useEffect(() => {
     const fetchConfig = async () => {
       try {
@@ -33,8 +30,6 @@ const Login = () => {
     }
     fetchConfig()
   }, [])
-
-  // Restore remembered email
   useEffect(() => {
     const remembered = localStorage.getItem('rememberedEmail')
     if (remembered) {
@@ -42,8 +37,6 @@ const Login = () => {
       setRememberMe(true)
     }
   }, [])
-
-  // Redirect based on role if already logged in
   useEffect(() => {
     if (isAuthenticated) {
       if (isAdmin) {
@@ -53,13 +46,10 @@ const Login = () => {
       }
     }
   }, [isAuthenticated, isAdmin, navigate])
-
-  // Handle token from Google OAuth redirect
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const token = params.get('token')
     if (token) {
-      // Decode token to get user info (JWT payload)
       try {
         const payload = JSON.parse(atob(token.split('.')[1]))
         const userData = {
@@ -69,47 +59,36 @@ const Login = () => {
           role: payload.role || 'user',
         }
         handleOAuthToken(token, userData)
-        // Clean URL
         window.history.replaceState({}, document.title, '/login')
-        // Redirect based on role
         if (userData.role === 'admin') {
           navigate('/dashboard')
         } else {
           navigate('/my-bookings')
         }
       } catch (e) {
-        // If we can't decode, just store token and redirect
         localStorage.setItem('token', token)
         navigate('/dashboard')
       }
     }
   }, [navigate, handleOAuthToken])
-
   const handleSubmit = async (e) => {
     e.preventDefault()
     setSubmitting(true)
-
     try {
       if (isRegister) {
-        // Register
         await registerUser({ name, email, password })
         showSuccess('Registration successful! Please sign in.')
         setIsRegister(false)
         setName('')
         setPassword('')
       } else {
-        // Login
         await login(email, password)
         showSuccess('Welcome back!')
-        
-        // Handle remember me
         if (rememberMe) {
           localStorage.setItem('rememberedEmail', email)
         } else {
           localStorage.removeItem('rememberedEmail')
         }
-        
-        // Redirect is handled by the useEffect above checking isAuthenticated/isAdmin
       }
     } catch (error) {
       const msg = error.response?.data?.message || 'Something went wrong.'
@@ -123,24 +102,20 @@ const Login = () => {
       setSubmitting(false)
     }
   }
-
   const handleGoogleLogin = () => {
     window.location.href = 'http://localhost:5000/api/auth/google'
   }
-
   const handleForgotPassword = (e) => {
     e.preventDefault()
     showSuccess('Forgot password feature coming soon!')
   }
-
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-
       <main className="flex-grow flex items-center justify-center bg-gray-50 py-16 px-4">
         <div className="w-full max-w-md">
           <div className="bg-white rounded-2xl shadow-xl p-8">
-            {/* Header */}
+            {}
             <div className="text-center mb-8">
               <div className="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
                 <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -156,8 +131,7 @@ const Login = () => {
                   : 'Sign in to your EcoStay Connect account'}
               </p>
             </div>
-
-            {/* Form */}
+            {}
             <form onSubmit={handleSubmit} className="space-y-6">
               {isRegister && (
                 <div>
@@ -175,7 +149,6 @@ const Login = () => {
                   />
                 </div>
               )}
-
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                   Email Address
@@ -190,7 +163,6 @@ const Login = () => {
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-colors text-gray-800 placeholder-gray-400"
                 />
               </div>
-
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
                   Password
@@ -205,7 +177,6 @@ const Login = () => {
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-colors text-gray-800 placeholder-gray-400"
                 />
               </div>
-
               {!isRegister && (
                 <div className="flex items-center justify-between text-sm">
                   <label className="flex items-center space-x-2 text-gray-600 cursor-pointer">
@@ -226,7 +197,6 @@ const Login = () => {
                   </button>
                 </div>
               )}
-
               <button
                 type="submit"
                 disabled={submitting}
@@ -239,11 +209,10 @@ const Login = () => {
                     : 'Sign In'}
               </button>
             </form>
-
-            {/* Google OAuth - only show if configured */}
+            {}
             {configLoaded && googleOAuthAvailable && (
               <>
-                {/* Divider */}
+                {}
                 <div className="relative my-8">
                   <div className="absolute inset-0 flex items-center">
                     <div className="w-full border-t border-gray-200"></div>
@@ -252,8 +221,7 @@ const Login = () => {
                     <span className="px-4 bg-white text-gray-500">Or continue with</span>
                   </div>
                 </div>
-
-                {/* Social Login Buttons */}
+                {}
                 <div className="grid grid-cols-1 gap-4">
                   <button
                     onClick={handleGoogleLogin}
@@ -270,7 +238,6 @@ const Login = () => {
                 </div>
               </>
             )}
-
             <p className="text-center text-sm text-gray-500 mt-8">
               {isRegister ? (
                 <>
@@ -297,10 +264,8 @@ const Login = () => {
           </div>
         </div>
       </main>
-
       <Footer />
     </div>
   )
 }
-
 export default Login

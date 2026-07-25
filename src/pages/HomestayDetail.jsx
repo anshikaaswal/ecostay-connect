@@ -6,7 +6,6 @@ import { Button, Loader } from '../components/ui'
 import toast from 'react-hot-toast'
 import { getHomestayById, createBooking } from '../services/api'
 import { useAuth } from '../context/AuthContext'
-
 const HomestayDetail = () => {
   const { id } = useParams()
   const [homestay, setHomestay] = useState(null)
@@ -21,7 +20,6 @@ const HomestayDetail = () => {
   const [bookingLoading, setBookingLoading] = useState(false)
   const { isAuthenticated, user } = useAuth()
   const navigate = useNavigate()
-
   useEffect(() => {
     const fetchHomestay = async () => {
       try {
@@ -35,8 +33,6 @@ const HomestayDetail = () => {
     }
     fetchHomestay()
   }, [id])
-
-  // Pre-fill user info if logged in
   useEffect(() => {
     if (user) {
       setBooking(prev => ({
@@ -46,24 +42,20 @@ const HomestayDetail = () => {
       }))
     }
   }, [user])
-
   const handleInputChange = (e) => {
     const value = e.target.name === 'guests' ? Number(e.target.value) : e.target.value
     setBooking({ ...booking, [e.target.name]: value })
   }
-
   const handleBookNow = async () => {
     if (!isAuthenticated) {
       toast.error('Please login to book a homestay')
       navigate('/login')
       return
     }
-
     if (!booking.userName || !booking.email || !booking.checkIn || !booking.checkOut) {
       toast.error('Please fill in all booking fields')
       return
     }
-
     setBookingLoading(true)
     try {
       await createBooking({
@@ -83,7 +75,6 @@ const HomestayDetail = () => {
       setBookingLoading(false)
     }
   }
-
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col">
@@ -95,7 +86,6 @@ const HomestayDetail = () => {
       </div>
     )
   }
-
   if (!homestay) {
     return (
       <div className="min-h-screen flex flex-col">
@@ -110,13 +100,11 @@ const HomestayDetail = () => {
       </div>
     )
   }
-
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
       <Navbar />
-
       <main className="flex-grow">
-        {/* Image Gallery */}
+        {}
         <section className="relative h-[50vh] md:h-[60vh] overflow-hidden">
           <img
             src={homestay.image}
@@ -132,19 +120,17 @@ const HomestayDetail = () => {
             </div>
           </div>
         </section>
-
-        {/* Content */}
+        {}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-            {/* Left Column */}
+            {}
             <div className="lg:col-span-2 space-y-8">
-              {/* Description */}
+              {}
               <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-md">
                 <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">About This Stay</h2>
                 <p className="text-gray-600 dark:text-gray-400 leading-relaxed">{homestay.description}</p>
               </div>
-
-              {/* Amenities */}
+              {}
               <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-md">
                 <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">Amenities</h2>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -159,8 +145,7 @@ const HomestayDetail = () => {
                 </div>
               </div>
             </div>
-
-            {/* Right Column - Booking Card */}
+            {}
             <div className="lg:col-span-1">
               <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-md sticky top-24">
                 <div className="mb-6">
@@ -170,7 +155,6 @@ const HomestayDetail = () => {
                     <span className="font-semibold mr-1">{homestay.rating}</span>
                   </div>
                 </div>
-
                 <div className="space-y-4 mb-6">
                   <div className="flex items-center text-gray-600 dark:text-gray-400 text-sm">
                     <svg className="w-5 h-5 mr-2 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -186,8 +170,7 @@ const HomestayDetail = () => {
                     Eco-friendly certified
                   </div>
                 </div>
-
-                {/* Booking Form */}
+                {}
                 <div className="space-y-4 mb-6">
                   <input
                     type="text"
@@ -232,13 +215,11 @@ const HomestayDetail = () => {
                     />
                   </div>
                 </div>
-
                 {!isAuthenticated && (
                   <p className="text-sm text-amber-600 dark:text-amber-400 mb-3 text-center">
                     Please <Link to="/login" className="underline font-medium">login</Link> to book
                   </p>
                 )}
-
                 <Button
                   variant="primary"
                   size="lg"
@@ -248,17 +229,14 @@ const HomestayDetail = () => {
                 >
                   {bookingLoading ? 'Booking...' : 'Book Now'}
                 </Button>
-
                 <p className="text-center text-xs text-gray-400 mt-4">No cancellation fees</p>
               </div>
             </div>
           </div>
         </section>
       </main>
-
       <Footer />
     </div>
   )
 }
-
 export default HomestayDetail

@@ -3,13 +3,11 @@ const variantStyles = {
   secondary: 'bg-gray-200 text-gray-800 hover:bg-gray-300',
   outline: 'bg-transparent border-2 border-green-700 text-green-700 hover:bg-green-700 hover:text-white',
 }
-
 const sizeStyles = {
   sm: 'px-4 py-2 text-sm rounded-lg',
   md: 'px-6 py-3 text-base rounded-xl',
   lg: 'px-8 py-4 text-lg rounded-xl',
 }
-
 const Button = ({ variant = 'primary', size = 'md', disabled = false, onClick, children, className = '' }) => {
   return (
     <button
@@ -27,5 +25,4 @@ const Button = ({ variant = 'primary', size = 'md', disabled = false, onClick, c
     </button>
   )
 }
-
 export default Button

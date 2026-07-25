@@ -1,5 +1,4 @@
 const { body } = require('express-validator');
-
 const validateRegister = [
   body('name')
     .notEmpty()
@@ -19,7 +18,6 @@ const validateRegister = [
     .isLength({ min: 6 })
     .withMessage('Password must be at least 6 characters'),
 ];
-
 const validateLogin = [
   body('email')
     .notEmpty()
@@ -31,5 +29,4 @@ const validateLogin = [
     .notEmpty()
     .withMessage('Password is required'),
 ];
-
 module.exports = { validateRegister, validateLogin };

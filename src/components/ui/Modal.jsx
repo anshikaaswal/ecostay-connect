@@ -1,32 +1,25 @@
 import { useEffect, useRef } from 'react'
-
 const Modal = ({ isOpen, onClose, title, children }) => {
   const overlayRef = useRef(null)
   const contentRef = useRef(null)
-
   useEffect(() => {
     const handleEscape = (e) => {
       if (e.key === 'Escape') onClose()
     }
-
     if (isOpen) {
       document.addEventListener('keydown', handleEscape)
       document.body.style.overflow = 'hidden'
       contentRef.current?.focus()
     }
-
     return () => {
       document.removeEventListener('keydown', handleEscape)
       document.body.style.overflow = ''
     }
   }, [isOpen, onClose])
-
   const handleOverlayClick = (e) => {
     if (e.target === overlayRef.current) onClose()
   }
-
   if (!isOpen) return null
-
   return (
     <div
       ref={overlayRef}
@@ -41,7 +34,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
         tabIndex={-1}
         className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto outline-none"
       >
-        {/* Header */}
+        {}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700">
           <h2 id="modal-title" className="text-xl font-bold text-gray-800 dark:text-gray-200">
             {title}
@@ -56,8 +49,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
             </svg>
           </button>
         </div>
-
-        {/* Body */}
+        {}
         <div className="px-6 py-4">
           {children}
         </div>
@@ -65,5 +57,4 @@ const Modal = ({ isOpen, onClose, title, children }) => {
     </div>
   )
 }
-
 export default Modal

@@ -1,6 +1,5 @@
 import Modal from './ui/Modal'
 import { Button } from './ui'
-
 const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message, confirmText = 'Delete', cancelText = 'Cancel', variant = 'danger' }) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={title || 'Confirm Action'}>
@@ -33,5 +32,4 @@ const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message, confirmText 
     </Modal>
   )
 }
-
 export default ConfirmModal

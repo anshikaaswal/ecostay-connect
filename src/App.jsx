@@ -10,7 +10,6 @@ import HomestayDetail from './pages/HomestayDetail'
 import AIPlanner from './pages/AIPlanner'
 import MyBookings from './pages/MyBookings'
 import ProtectedRoute from './components/ProtectedRoute'
-
 const App = () => {
   return (
     <ErrorBoundary>
@@ -50,5 +49,4 @@ const App = () => {
     </ErrorBoundary>
   )
 }
-
 export default App

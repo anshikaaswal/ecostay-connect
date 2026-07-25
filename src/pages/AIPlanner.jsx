@@ -4,7 +4,6 @@ import Footer from '../components/Footer'
 import { Button, Input, Loader, Spinner } from '../components/ui'
 import { showSuccess, showError, showInfo } from '../components/ui'
 import { generateTravelPlan } from '../services/api'
-
 const AIPlanner = () => {
   const [destination, setDestination] = useState('')
   const [days, setDays] = useState('')
@@ -13,20 +12,16 @@ const AIPlanner = () => {
   const [loading, setLoading] = useState(false)
   const [travelPlan, setTravelPlan] = useState(null)
   const [error, setError] = useState('')
-
   const handleGenerate = async (e) => {
     e.preventDefault()
     setError('')
     setTravelPlan(null)
-
     if (!destination || !days || !budget || !travelStyle) {
       setError('Please fill in all fields to generate your travel plan.')
       return
     }
-
     setLoading(true)
     showInfo('Generating your personalized eco-travel plan...')
-
     try {
       const response = await generateTravelPlan({
         destination,
@@ -34,7 +29,6 @@ const AIPlanner = () => {
         budget,
         travelStyle,
       })
-
       if (response.data.success) {
         setTravelPlan(response.data.data)
         showSuccess('Travel plan generated successfully!')
@@ -51,11 +45,9 @@ const AIPlanner = () => {
       setLoading(false)
     }
   }
-
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
       <Navbar />
-
       <main className="flex-grow">
         <section className="bg-gradient-to-r from-green-700 to-teal-600 dark:from-gray-800 dark:to-gray-700 text-white py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -70,11 +62,10 @@ const AIPlanner = () => {
             </p>
           </div>
         </section>
-
         <section className="py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* Input Form */}
+              {}
               <div className="lg:col-span-1">
                 <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-8 sticky top-24">
                   <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6">Your Preferences</h2>
@@ -127,11 +118,9 @@ const AIPlanner = () => {
                         <option value="solo">Solo Travel</option>
                       </select>
                     </div>
-
                     {error && (
                       <p className="text-red-500 text-sm">{error}</p>
                     )}
-
                     <Button
                       type="submit"
                       variant="primary"
@@ -151,8 +140,7 @@ const AIPlanner = () => {
                   </form>
                 </div>
               </div>
-
-              {/* Results */}
+              {}
               <div className="lg:col-span-2">
                 {!travelPlan && !loading && (
                   <div className="text-center py-20">
@@ -163,7 +151,6 @@ const AIPlanner = () => {
                     <p className="text-gray-400 dark:text-gray-500 max-w-md mx-auto">Fill in your preferences on the left and click Generate Plan to get an AI-powered eco-travel itinerary.</p>
                   </div>
                 )}
-
                 {loading && (
                   <div className="flex flex-col items-center justify-center py-20">
                     <Loader size="lg" />
@@ -172,10 +159,9 @@ const AIPlanner = () => {
                     </p>
                   </div>
                 )}
-
                 {travelPlan && !loading && (
                   <div className="space-y-8">
-                    {/* Travel Summary */}
+                    {}
                     <div className="bg-gradient-to-r from-green-50 to-teal-50 dark:from-gray-800 dark:to-gray-800 rounded-2xl p-8 shadow-md border border-green-100 dark:border-gray-700">
                       <div className="flex items-start justify-between mb-4">
                         <div>
@@ -191,8 +177,7 @@ const AIPlanner = () => {
                         {travelPlan.travelSummary}
                       </p>
                     </div>
-
-                    {/* Day-wise Itinerary */}
+                    {}
                     <div>
                       <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4 flex items-center">
                         <svg className="w-6 h-6 mr-2 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -247,8 +232,7 @@ const AIPlanner = () => {
                         ))}
                       </div>
                     </div>
-
-                    {/* Food Recommendations */}
+                    {}
                     {travelPlan.foodRecommendations && travelPlan.foodRecommendations.length > 0 && (
                       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-8">
                         <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4 flex items-center">
@@ -272,8 +256,7 @@ const AIPlanner = () => {
                         </div>
                       </div>
                     )}
-
-                    {/* Eco-Friendly Tips */}
+                    {}
                     {travelPlan.ecoFriendlyTips && travelPlan.ecoFriendlyTips.length > 0 && (
                       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-8">
                         <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4 flex items-center">
@@ -304,10 +287,8 @@ const AIPlanner = () => {
           </div>
         </section>
       </main>
-
       <Footer />
     </div>
   )
 }
-
 export default AIPlanner

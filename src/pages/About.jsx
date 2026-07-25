@@ -1,21 +1,18 @@
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
-
 const About = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      
       <main className="flex-grow">
-        {/* Hero Banner */}
+        {}
         <section className="bg-gradient-to-r from-green-700 to-green-600 text-white py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h1 className="text-4xl sm:text-5xl font-bold mb-4">About EcoStay Connect</h1>
             <div className="w-16 h-1 bg-green-300 mx-auto rounded-full"></div>
           </div>
         </section>
-
-        {/* Content */}
+        {}
         <section className="py-16 bg-white">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="prose prose-lg max-w-none">
@@ -37,8 +34,7 @@ const About = () => {
                 EcoStay Connect helps you find the perfect stay that aligns with your values.
               </p>
             </div>
-
-            {/* Mission Cards */}
+            {}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
               <div className="bg-green-50 rounded-xl p-6 text-center">
                 <div className="w-14 h-14 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -71,10 +67,8 @@ const About = () => {
           </div>
         </section>
       </main>
-
       <Footer />
     </div>
   )
 }
-
 export default About

@@ -6,7 +6,6 @@ import { Button, Modal, Spinner } from '../components/ui'
 import { showSuccess, showError } from '../components/ui'
 import { getHomestays, createHomestay, updateHomestay, deleteHomestay, getBookings } from '../services/api'
 import { useAuth } from '../context/AuthContext'
-
 const initialFormState = {
   name: '',
   location: '',
@@ -16,7 +15,6 @@ const initialFormState = {
   description: '',
   amenities: '',
 }
-
 const Dashboard = () => {
   const [homestays, setHomestays] = useState([])
   const [bookings, setBookings] = useState([])
@@ -29,7 +27,6 @@ const Dashboard = () => {
   const [deleteConfirm, setDeleteConfirm] = useState(null)
   const { isAdmin, isAuthenticated, user } = useAuth()
   const navigate = useNavigate()
-
   const fetchHomestays = useCallback(async () => {
     try {
       setLoading(true)
@@ -41,20 +38,17 @@ const Dashboard = () => {
       setLoading(false)
     }
   }, [])
-
   const fetchBookings = useCallback(async () => {
     try {
       setBookingsLoading(true)
       const res = await getBookings()
       setBookings(res.data.data)
     } catch (error) {
-      // Silently fail for non-admin users who may not have bookings
       setBookings([])
     } finally {
       setBookingsLoading(false)
     }
   }, [])
-
   useEffect(() => {
     if (!isAuthenticated) {
       navigate('/login')
@@ -63,7 +57,6 @@ const Dashboard = () => {
     fetchHomestays()
     fetchBookings()
   }, [isAuthenticated, navigate, fetchHomestays, fetchBookings])
-
   const openAddModal = () => {
     if (!isAdmin) {
       showError('Only admins can add homestays.')
@@ -73,7 +66,6 @@ const Dashboard = () => {
     setFormData(initialFormState)
     setModalOpen(true)
   }
-
   const openEditModal = (homestay) => {
     if (!isAdmin) {
       showError('Only admins can edit homestays.')
@@ -91,15 +83,12 @@ const Dashboard = () => {
     })
     setModalOpen(true)
   }
-
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
   }
-
   const handleSubmit = async (e) => {
     e.preventDefault()
     setSubmitting(true)
-
     const payload = {
       name: formData.name,
       location: formData.location,
@@ -109,7 +98,6 @@ const Dashboard = () => {
       description: formData.description,
       amenities: formData.amenities.split(',').map((a) => a.trim()).filter(Boolean),
     }
-
     try {
       if (editingId) {
         await updateHomestay(editingId, payload)
@@ -129,7 +117,6 @@ const Dashboard = () => {
       setSubmitting(false)
     }
   }
-
   const handleDelete = async (id) => {
     if (!isAdmin) {
       showError('Only admins can delete homestays.')
@@ -145,7 +132,6 @@ const Dashboard = () => {
       showError(msg)
     }
   }
-
   const formatDate = (dateStr) => {
     return new Date(dateStr).toLocaleDateString('en-IN', {
       year: 'numeric',
@@ -153,7 +139,6 @@ const Dashboard = () => {
       day: 'numeric',
     })
   }
-
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
@@ -165,13 +150,11 @@ const Dashboard = () => {
       </div>
     )
   }
-
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
       <Navbar />
-
       <main className="flex-grow">
-        {/* Header */}
+        {}
         <section className="bg-gradient-to-r from-green-700 to-green-600 dark:from-gray-800 dark:to-gray-700 text-white py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h1 className="text-4xl sm:text-5xl font-bold mb-2">
@@ -195,11 +178,10 @@ const Dashboard = () => {
             )}
           </div>
         </section>
-
-        {/* Content */}
+        {}
         <section className="py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Stats + Add Button */}
+            {}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-10 gap-4">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full sm:w-auto">
                 <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border-l-4 border-green-500">
@@ -228,8 +210,7 @@ const Dashboard = () => {
                 </Button>
               )}
             </div>
-
-            {/* Homestay Cards Grid */}
+            {}
             {homestays.length === 0 ? (
               <div className="text-center py-20">
                 <svg className="w-20 h-20 text-gray-300 dark:text-gray-600 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
@@ -248,7 +229,7 @@ const Dashboard = () => {
                     className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden transform transition-all duration-300 hover:shadow-2xl group cursor-pointer"
                     onClick={() => navigate(`/homestay/${homestay._id}`)}
                   >
-                    {/* Image */}
+                    {}
                     <div className="relative h-48 overflow-hidden">
                       <img
                         src={homestay.image}
@@ -266,8 +247,7 @@ const Dashboard = () => {
                         </div>
                       )}
                     </div>
-
-                    {/* Content */}
+                    {}
                     <div className="p-5">
                       <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-1 truncate">{homestay.name}</h3>
                       <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-2">
@@ -279,8 +259,7 @@ const Dashboard = () => {
                       </div>
                       <p className="text-2xl font-bold text-green-700 dark:text-green-400 mb-2">₹{homestay.price}/night</p>
                       <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">{homestay.description}</p>
-
-                      {/* Amenities */}
+                      {}
                       {homestay.amenities && homestay.amenities.length > 0 && (
                         <div className="flex flex-wrap gap-1.5 mb-4">
                           {homestay.amenities.slice(0, 3).map((amenity, i) => (
@@ -295,8 +274,7 @@ const Dashboard = () => {
                           )}
                         </div>
                       )}
-
-                      {/* Admin Action Buttons - only for admins */}
+                      {}
                       {isAdmin && (
                         <div className="flex gap-3" onClick={(e) => e.stopPropagation()}>
                           <Button
@@ -328,8 +306,7 @@ const Dashboard = () => {
                 ))}
               </div>
             )}
-
-            {/* My Bookings Section */}
+            {}
             {!isAdmin && (
               <div className="mt-16">
                 <div className="flex items-center justify-between mb-6">
@@ -340,7 +317,6 @@ const Dashboard = () => {
                     </Button>
                   )}
                 </div>
-
                 {bookingsLoading ? (
                   <div className="flex justify-center py-8">
                     <Spinner size="md" />
@@ -404,8 +380,7 @@ const Dashboard = () => {
           </div>
         </section>
       </main>
-
-      {/* Add / Edit Modal - only for admins */}
+      {}
       {isAdmin && (
         <>
           <Modal isOpen={modalOpen} onClose={() => { setModalOpen(false); setEditingId(null); setFormData(initialFormState) }} title={editingId ? 'Edit Homestay' : 'Add Homestay'}>
@@ -513,8 +488,7 @@ const Dashboard = () => {
               </div>
             </form>
           </Modal>
-
-          {/* Delete Confirmation Modal */}
+          {}
           <Modal
             isOpen={!!deleteConfirm}
             onClose={() => setDeleteConfirm(null)}
@@ -549,10 +523,8 @@ const Dashboard = () => {
           </Modal>
         </>
       )}
-
       <Footer />
     </div>
   )
 }
-
 export default Dashboard

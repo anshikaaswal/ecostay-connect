@@ -1,8 +1,6 @@
 const rateLimit = require('express-rate-limit');
-
-// Rate limiter for auth routes: 5 requests per 15 minutes
 const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
+  windowMs: 15 * 60 * 1000,
   max: 5,
   message: {
     success: false,
@@ -11,5 +9,4 @@ const authLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
-
 module.exports = { authLimiter };

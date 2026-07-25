@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-
 const homestaySchema = new mongoose.Schema(
   {
     name: {
@@ -40,5 +39,4 @@ const homestaySchema = new mongoose.Schema(
     timestamps: true,
   }
 );
-
 module.exports = mongoose.model('Homestay', homestaySchema);

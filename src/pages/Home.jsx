@@ -7,12 +7,10 @@ import Footer from '../components/Footer'
 import { Button, Loader } from '../components/ui'
 import toast from 'react-hot-toast'
 import { getHomestays } from '../services/api'
-
 const Home = () => {
   const navigate = useNavigate()
   const [homestays, setHomestays] = useState([])
   const [loading, setLoading] = useState(true)
-
   useEffect(() => {
     const fetchHomestays = async () => {
       try {
@@ -26,8 +24,6 @@ const Home = () => {
     }
     fetchHomestays()
   }, [])
-
-  // Derive popular destinations from actual homestay data
   const popularDestinations = homestays.reduce((acc, h) => {
     const location = h.location?.trim()
     if (!location) return acc
@@ -43,13 +39,11 @@ const Home = () => {
     }
     return acc
   }, []).slice(0, 4)
-
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
       <Hero />
-      
-      {/* Featured Stays Section */}
+      {}
       <section className="py-16 bg-gray-50 dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -61,7 +55,6 @@ const Home = () => {
               Handpicked sustainable accommodations for the conscious traveler
             </p>
           </div>
-
           {loading ? (
             <div className="flex justify-center py-12">
               <Loader />
@@ -89,7 +82,6 @@ const Home = () => {
               ))}
             </div>
           )}
-
           <div className="text-center mt-10">
             <Button
               variant="outline"
@@ -101,8 +93,7 @@ const Home = () => {
           </div>
         </div>
       </section>
-
-      {/* Popular Destinations Section */}
+      {}
       {popularDestinations.length > 0 && (
         <section className="py-16 bg-white dark:bg-gray-800">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -115,7 +106,6 @@ const Home = () => {
                 Explore top eco-tourism destinations across India
               </p>
             </div>
-
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {popularDestinations.map((dest, index) => (
                 <div
@@ -140,8 +130,7 @@ const Home = () => {
           </div>
         </section>
       )}
-
-      {/* AI Travel Assistant Section */}
+      {}
       <section className="py-16 bg-green-700 dark:bg-gray-900 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -163,10 +152,8 @@ const Home = () => {
           </Button>
         </div>
       </section>
-
       <Footer />
     </div>
   )
 }
-
 export default Home

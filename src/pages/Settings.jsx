@@ -5,7 +5,6 @@ import { Button, Input } from '../components/ui'
 import { showSuccess, showError } from '../components/ui'
 import { useAuth } from '../context/AuthContext'
 import { updateProfile } from '../services/api'
-
 const Settings = () => {
   const { user, setUser } = useAuth()
   const [name, setName] = useState(user?.name || '')
@@ -13,7 +12,6 @@ const Settings = () => {
   const [submitting, setSubmitting] = useState(false)
   const [notifications, setNotifications] = useState(true)
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem('theme') === 'dark')
-
   const handleSaveProfile = async (e) => {
     e.preventDefault()
     setSubmitting(true)
@@ -33,7 +31,6 @@ const Settings = () => {
       setSubmitting(false)
     }
   }
-
   const toggleDarkMode = () => {
     const newMode = !darkMode
     setDarkMode(newMode)
@@ -46,11 +43,9 @@ const Settings = () => {
     }
     showSuccess(`Theme switched to ${newMode ? 'dark' : 'light'} mode`)
   }
-
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
       <Navbar />
-
       <main className="flex-grow">
         <section className="bg-gradient-to-r from-green-700 to-green-600 dark:from-gray-800 dark:to-gray-700 text-white py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -58,10 +53,9 @@ const Settings = () => {
             <p className="text-green-100 text-lg">Manage your profile, theme, and preferences.</p>
           </div>
         </section>
-
         <section className="py-16">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-            {/* Profile Section */}
+            {}
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-8">
               <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6">Profile</h2>
               <form onSubmit={handleSaveProfile} className="space-y-5">
@@ -85,8 +79,7 @@ const Settings = () => {
                 </Button>
               </form>
             </div>
-
-            {/* Theme Settings */}
+            {}
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-8">
               <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6">Theme</h2>
               <div className="flex items-center justify-between">
@@ -108,8 +101,7 @@ const Settings = () => {
                 </button>
               </div>
             </div>
-
-            {/* Notification Settings */}
+            {}
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-8">
               <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6">Notifications</h2>
               <div className="space-y-4">
@@ -139,10 +131,8 @@ const Settings = () => {
           </div>
         </section>
       </main>
-
       <Footer />
     </div>
   )
 }
-
 export default Settings

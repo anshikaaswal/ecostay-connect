@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-
 const getInitials = (name) => {
   if (!name) return '?'
   const parts = name.trim().split(/\s+/)
@@ -10,7 +9,6 @@ const getInitials = (name) => {
   }
   return parts[0][0].toUpperCase()
 }
-
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [darkMode, setDarkMode] = useState(() => {
@@ -20,7 +18,6 @@ const Navbar = () => {
   const { user, isAuthenticated, isAdmin, logout } = useAuth()
   const navigate = useNavigate()
   const profileRef = useRef(null)
-
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add('dark')
@@ -30,8 +27,6 @@ const Navbar = () => {
       localStorage.setItem('theme', 'light')
     }
   }, [darkMode])
-
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (profileRef.current && !profileRef.current.contains(e.target)) {
@@ -43,8 +38,6 @@ const Navbar = () => {
     }
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [profileOpen])
-
-  // Close dropdown on Escape key
   useEffect(() => {
     const handleEscape = (e) => {
       if (e.key === 'Escape') setProfileOpen(false)
@@ -54,33 +47,28 @@ const Navbar = () => {
     }
     return () => document.removeEventListener('keydown', handleEscape)
   }, [profileOpen])
-
   const toggleMenu = () => setIsOpen(!isOpen)
-
   const handleLogout = () => {
     logout()
     setProfileOpen(false)
     navigate('/')
   }
-
   const navigateTo = (path) => {
     setProfileOpen(false)
     navigate(path)
   }
-
   return (
     <nav className="bg-green-800 dark:bg-gray-900 text-white shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
+          {}
           <Link to="/" className="flex items-center space-x-2">
             <svg className="h-8 w-8 text-green-300" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 3L4 9v12h16V9l-8-6zM10 15h4v4h-4v-4z"/>
             </svg>
             <span className="font-bold text-xl tracking-tight">EcoStay Connect</span>
           </Link>
-
-          {/* Desktop Menu */}
+          {}
           <div className="hidden md:flex items-center space-x-6">
             <Link to="/" className="hover:text-green-300 dark:hover:text-green-400 transition-colors duration-200 font-medium">Home</Link>
             <Link to="/about" className="hover:text-green-300 dark:hover:text-green-400 transition-colors duration-200 font-medium">About</Link>
@@ -90,10 +78,9 @@ const Navbar = () => {
             )}
             <Link to="/settings" className="hover:text-green-300 dark:hover:text-green-400 transition-colors duration-200 font-medium">Settings</Link>
             <Link to="/ai-planner" className="hover:text-green-300 dark:hover:text-green-400 transition-colors duration-200 font-medium">AI Planner</Link>
-            
             {isAuthenticated ? (
               <div className="relative" ref={profileRef}>
-                {/* Avatar Button with Admin Badge */}
+                {}
                 <div className="relative">
                   <button
                     onClick={() => setProfileOpen(!profileOpen)}
@@ -109,11 +96,10 @@ const Navbar = () => {
                     </span>
                   )}
                 </div>
-
-                {/* Dropdown Menu */}
+                {}
                 {profileOpen && (
                   <div className="absolute right-0 mt-2 w-72 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 overflow-hidden z-50 animate-fade-in">
-                    {/* User Info Header */}
+                    {}
                     <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-700">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
@@ -129,8 +115,7 @@ const Navbar = () => {
                         </div>
                       </div>
                     </div>
-
-                    {/* Menu Items */}
+                    {}
                     <div className="py-2">
                       <button
                         onClick={() => navigateTo('/dashboard')}
@@ -160,8 +145,7 @@ const Navbar = () => {
                         My Profile
                       </button>
                     </div>
-
-                    {/* Divider + Logout */}
+                    {}
                     <div className="border-t border-gray-100 dark:border-gray-700">
                       <button
                         onClick={handleLogout}
@@ -179,8 +163,7 @@ const Navbar = () => {
             ) : (
               <Link to="/login" className="hover:text-green-300 dark:hover:text-green-400 transition-colors duration-200 font-medium">Login</Link>
             )}
-
-            {/* Theme Toggle */}
+            {}
             <button
               onClick={() => setDarkMode(!darkMode)}
               className="p-2 rounded-lg bg-green-700 dark:bg-gray-700 hover:bg-green-600 dark:hover:bg-gray-600 transition-colors cursor-pointer"
@@ -197,8 +180,7 @@ const Navbar = () => {
               )}
             </button>
           </div>
-
-          {/* Mobile Controls */}
+          {}
           <div className="flex items-center space-x-2 md:hidden">
             <button
               onClick={() => setDarkMode(!darkMode)}
@@ -233,8 +215,7 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-
-      {/* Mobile Menu */}
+      {}
       {isOpen && (
         <div className="md:hidden bg-green-700 dark:bg-gray-800 px-4 pb-4 space-y-2">
           <Link to="/" onClick={() => setIsOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium hover:bg-green-600 dark:hover:bg-gray-700 transition-colors">Home</Link>
@@ -275,8 +256,7 @@ const Navbar = () => {
           )}
         </div>
       )}
-
-      {/* Animation keyframes injected via style tag */}
+      {}
       <style>{`
         @keyframes fadeIn {
           from {
@@ -296,5 +276,4 @@ const Navbar = () => {
     </nav>
   )
 }
-
 export default Navbar

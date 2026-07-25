@@ -1,16 +1,11 @@
 const Booking = require('../models/Booking');
 const Homestay = require('../models/Homestay');
-
-// @desc    Get all bookings (users see own, admins see all)
-// @route   GET /api/bookings
 const getBookings = async (req, res) => {
   try {
     let bookings;
     if (req.user.role === 'admin') {
-      // Admin sees all bookings
       bookings = await Booking.find().populate('homestay').sort({ createdAt: -1 });
     } else {
-      // Regular users see only their bookings (by email)
       bookings = await Booking.find({ email: req.user.email }).populate('homestay').sort({ createdAt: -1 });
     }
     res.status(200).json({
@@ -26,28 +21,21 @@ const getBookings = async (req, res) => {
     });
   }
 };
-
-// @desc    Get single booking by ID
-// @route   GET /api/bookings/:id
 const getBookingById = async (req, res) => {
   try {
     const booking = await Booking.findById(req.params.id).populate('homestay');
-
     if (!booking) {
       return res.status(404).json({
         success: false,
         message: 'Booking not found',
       });
     }
-
-    // Ensure users can only see their own bookings
     if (req.user.role !== 'admin' && booking.email !== req.user.email) {
       return res.status(403).json({
         success: false,
         message: 'Forbidden: You can only view your own bookings',
       });
     }
-
     res.status(200).json({
       success: true,
       data: booking,
@@ -66,22 +54,15 @@ const getBookingById = async (req, res) => {
     });
   }
 };
-
-// @desc    Create a new booking
-// @route   POST /api/bookings
 const createBooking = async (req, res) => {
   try {
     const { userName, email, homestayId, checkIn, checkOut, guests } = req.body;
-
-    // Validation
     if (!userName || !email || !homestayId || !checkIn || !checkOut) {
       return res.status(400).json({
         success: false,
         message: 'Validation Error: userName, email, homestayId, checkIn, and checkOut are required',
       });
     }
-
-    // Check if homestay exists
     const homestay = await Homestay.findById(homestayId);
     if (!homestay) {
       return res.status(404).json({
@@ -89,7 +70,6 @@ const createBooking = async (req, res) => {
         message: 'Homestay not found',
       });
     }
-
     const booking = await Booking.create({
       userName,
       email,
@@ -98,9 +78,7 @@ const createBooking = async (req, res) => {
       checkOut,
       guests: guests || 1,
     });
-
     const populatedBooking = await Booking.findById(booking._id).populate('homestay');
-
     res.status(201).json({
       success: true,
       data: populatedBooking,
@@ -121,30 +99,22 @@ const createBooking = async (req, res) => {
     });
   }
 };
-
-// @desc    Delete a booking
-// @route   DELETE /api/bookings/:id
 const deleteBooking = async (req, res) => {
   try {
     const booking = await Booking.findById(req.params.id);
-
     if (!booking) {
       return res.status(404).json({
         success: false,
         message: 'Booking not found',
       });
     }
-
-    // Ensure users can only delete their own bookings (admins can delete any)
     if (req.user.role !== 'admin' && booking.email !== req.user.email) {
       return res.status(403).json({
         success: false,
         message: 'Forbidden: You can only delete your own bookings',
       });
     }
-
     await Booking.findByIdAndDelete(req.params.id);
-
     res.status(204).send();
   } catch (error) {
     if (error.kind === 'ObjectId') {
@@ -160,7 +130,6 @@ const deleteBooking = async (req, res) => {
     });
   }
 };
-
 module.exports = {
   getBookings,
   getBookingById,

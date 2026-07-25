@@ -1,7 +1,4 @@
 const Homestay = require('../models/Homestay');
-
-// @desc    Get all homestays
-// @route   GET /api/homestays
 const getHomestays = async (req, res) => {
   try {
     const homestays = await Homestay.find().sort({ createdAt: -1 });
@@ -18,20 +15,15 @@ const getHomestays = async (req, res) => {
     });
   }
 };
-
-// @desc    Get single homestay by ID
-// @route   GET /api/homestays/:id
 const getHomestayById = async (req, res) => {
   try {
     const homestay = await Homestay.findById(req.params.id);
-
     if (!homestay) {
       return res.status(404).json({
         success: false,
         message: 'Homestay not found',
       });
     }
-
     res.status(200).json({
       success: true,
       data: homestay,
@@ -50,13 +42,9 @@ const getHomestayById = async (req, res) => {
     });
   }
 };
-
-// @desc    Search homestays by name or location
-// @route   GET /api/homestays/search?q=
 const searchHomestays = async (req, res) => {
   try {
     const { q } = req.query;
-
     if (!q) {
       const homestays = await Homestay.find().sort({ createdAt: -1 });
       return res.status(200).json({
@@ -65,7 +53,6 @@ const searchHomestays = async (req, res) => {
         data: homestays,
       });
     }
-
     const query = q.toLowerCase();
     const results = await Homestay.find({
       $or: [
@@ -73,7 +60,6 @@ const searchHomestays = async (req, res) => {
         { location: { $regex: query, $options: 'i' } },
       ],
     });
-
     res.status(200).json({
       success: true,
       count: results.length,
@@ -87,21 +73,15 @@ const searchHomestays = async (req, res) => {
     });
   }
 };
-
-// @desc    Create a new homestay
-// @route   POST /api/homestays
 const createHomestay = async (req, res) => {
   try {
     const { name, location, price, rating, image, description, amenities } = req.body;
-
-    // Validation
     if (!name || !location || !price) {
       return res.status(400).json({
         success: false,
         message: 'Validation Error: name, location, and price are required',
       });
     }
-
     const homestay = await Homestay.create({
       name,
       location,
@@ -111,7 +91,6 @@ const createHomestay = async (req, res) => {
       description: description || '',
       amenities: amenities || [],
     });
-
     res.status(201).json({
       success: true,
       data: homestay,
@@ -132,28 +111,21 @@ const createHomestay = async (req, res) => {
     });
   }
 };
-
-// @desc    Update a homestay
-// @route   PUT /api/homestays/:id
 const updateHomestay = async (req, res) => {
   try {
     const { name, location, price, rating, image, description, amenities } = req.body;
-
     let homestay = await Homestay.findById(req.params.id);
-
     if (!homestay) {
       return res.status(404).json({
         success: false,
         message: 'Homestay not found',
       });
     }
-
     homestay = await Homestay.findByIdAndUpdate(
       req.params.id,
       { $set: { name, location, price, rating, image, description, amenities } },
       { new: true, runValidators: true }
     );
-
     res.status(200).json({
       success: true,
       data: homestay,
@@ -180,22 +152,16 @@ const updateHomestay = async (req, res) => {
     });
   }
 };
-
-// @desc    Delete a homestay
-// @route   DELETE /api/homestays/:id
 const deleteHomestay = async (req, res) => {
   try {
     const homestay = await Homestay.findById(req.params.id);
-
     if (!homestay) {
       return res.status(404).json({
         success: false,
         message: 'Homestay not found',
       });
     }
-
     await Homestay.findByIdAndDelete(req.params.id);
-
     res.status(204).send();
   } catch (error) {
     if (error.kind === 'ObjectId') {
@@ -211,7 +177,6 @@ const deleteHomestay = async (req, res) => {
     });
   }
 };
-
 module.exports = {
   getHomestays,
   getHomestayById,

@@ -3,9 +3,7 @@ const dotenv = require('dotenv');
 const Homestay = require('./models/Homestay');
 const Booking = require('./models/Booking');
 const User = require('./models/User');
-
 dotenv.config();
-
 const homestays = [
   {
     name: 'Mountain View Cottage',
@@ -62,23 +60,16 @@ const homestays = [
     amenities: ['Canoeing', 'Cooking Classes', 'Lake View', 'Organic Meals', 'WiFi'],
   },
 ];
-
 const seedDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI);
     console.log('MongoDB Connected for seeding...');
-
-    // Clear existing data
     await Homestay.deleteMany({});
     await Booking.deleteMany({});
     await User.deleteMany({});
     console.log('Cleared existing data...');
-
-    // Insert homestays
     const createdHomestays = await Homestay.insertMany(homestays);
     console.log(`Inserted ${createdHomestays.length} homestays`);
-
-    // Create admin user
     const adminUser = await User.create({
       name: 'Admin',
       email: 'admin@ecostay.com',
@@ -86,8 +77,6 @@ const seedDB = async () => {
       role: 'admin',
     });
     console.log(`Created admin user: ${adminUser.email} (password: admin123)`);
-
-    // Create regular test user
     const testUser = await User.create({
       name: 'Test User',
       email: 'test@example.com',
@@ -95,13 +84,11 @@ const seedDB = async () => {
       role: 'user',
     });
     console.log(`Created test user: ${testUser.email} (password: test123)`);
-
-    // Create bookings referencing the inserted homestays
     const bookings = [
       {
         userName: 'Anshika',
         email: 'anshika@example.com',
-        homestay: createdHomestays[1]._id, // Forest Retreat
+        homestay: createdHomestays[1]._id,
         checkIn: new Date('2026-07-20'),
         checkOut: new Date('2026-07-22'),
         guests: 2,
@@ -110,7 +97,7 @@ const seedDB = async () => {
       {
         userName: 'Rahul',
         email: 'rahul@example.com',
-        homestay: createdHomestays[0]._id, // Mountain View Cottage
+        homestay: createdHomestays[0]._id,
         checkIn: new Date('2026-08-10'),
         checkOut: new Date('2026-08-14'),
         guests: 3,
@@ -119,17 +106,15 @@ const seedDB = async () => {
       {
         userName: 'Test User',
         email: 'test@example.com',
-        homestay: createdHomestays[2]._id, // River Side Stay
+        homestay: createdHomestays[2]._id,
         checkIn: new Date('2026-09-05'),
         checkOut: new Date('2026-09-08'),
         guests: 2,
         status: 'pending',
       },
     ];
-
     const createdBookings = await Booking.insertMany(bookings);
     console.log(`Inserted ${createdBookings.length} bookings`);
-
     console.log('');
     console.log('Database seeded successfully!');
     console.log('---');
@@ -141,5 +126,4 @@ const seedDB = async () => {
     process.exit(1);
   }
 };
-
 seedDB();
