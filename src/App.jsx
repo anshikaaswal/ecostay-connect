@@ -9,6 +9,7 @@ import Settings from './pages/Settings'
 import HomestayDetail from './pages/HomestayDetail'
 import AIPlanner from './pages/AIPlanner'
 import MyBookings from './pages/MyBookings'
+import NotFound from './pages/NotFound'
 import ProtectedRoute from './components/ProtectedRoute'
 const App = () => {
   return (
@@ -44,6 +45,7 @@ const App = () => {
               </ProtectedRoute>
             }
           />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </AuthProvider>
     </ErrorBoundary>
