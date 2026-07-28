@@ -10,11 +10,13 @@ import HomestayDetail from './pages/HomestayDetail'
 import AIPlanner from './pages/AIPlanner'
 import MyBookings from './pages/MyBookings'
 import NotFound from './pages/NotFound'
+import ScrollToTop from './components/ScrollToTop'
 import ProtectedRoute from './components/ProtectedRoute'
 const App = () => {
   return (
     <ErrorBoundary>
       <AuthProvider>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
