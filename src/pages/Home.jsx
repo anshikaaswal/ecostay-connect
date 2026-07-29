@@ -5,6 +5,7 @@ import Hero from '../components/Hero'
 import Card from '../components/Card'
 import Footer from '../components/Footer'
 import { Button, Loader } from '../components/ui'
+import EmptyState from '../components/EmptyState'
 import toast from 'react-hot-toast'
 import { getHomestays } from '../services/api'
 const Home = () => {
@@ -60,15 +61,13 @@ const Home = () => {
               <Loader />
             </div>
           ) : homestays.length === 0 ? (
-            <div className="text-center py-12">
-              <svg className="w-20 h-20 text-gray-300 dark:text-gray-600 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-              </svg>
-              <p className="text-gray-500 dark:text-gray-400 text-lg mb-4">No Homestays Available</p>
-              <Button variant="primary" onClick={() => navigate('/dashboard')}>
-                Browse All Stays
-              </Button>
-            </div>
+            <EmptyState
+              icon="🏡"
+              title="No Homestays Available"
+              description="We're refreshing our eco-friendly stays. Check back soon for new sustainable accommodations!"
+              buttonText="Browse All Stays"
+              buttonLink="/dashboard"
+            />
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {homestays.slice(0, 6).map((stay) => (

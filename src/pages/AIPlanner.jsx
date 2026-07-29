@@ -3,6 +3,7 @@ import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import { Button, Input, Loader, Spinner } from '../components/ui'
 import { showSuccess, showError, showInfo } from '../components/ui'
+import EmptyState from '../components/EmptyState'
 import { generateTravelPlan } from '../services/api'
 const AIPlanner = () => {
   const [destination, setDestination] = useState('')
@@ -143,13 +144,13 @@ const AIPlanner = () => {
               {}
               <div className="lg:col-span-2">
                 {!travelPlan && !loading && (
-                  <div className="text-center py-20">
-                    <svg className="w-20 h-20 text-gray-300 dark:text-gray-600 mx-auto mb-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                    </svg>
-                    <h3 className="text-2xl font-bold text-gray-400 dark:text-gray-500 mb-2">Generate Your First Travel Plan</h3>
-                    <p className="text-gray-400 dark:text-gray-500 max-w-md mx-auto">Fill in your preferences on the left and click Generate Plan to get an AI-powered eco-travel itinerary.</p>
-                  </div>
+                  <EmptyState
+                    icon="🗺️"
+                    title="Generate Your First Travel Plan"
+                    description="Fill in your preferences on the left and click Generate Plan to get an AI-powered eco-travel itinerary tailored just for you."
+                    buttonText="Try AI Planner"
+                    buttonLink="/ai-planner"
+                  />
                 )}
                 {loading && (
                   <div className="flex flex-col items-center justify-center py-20">

@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import { Button, Spinner } from '../components/ui'
 import { showSuccess, showError } from '../components/ui'
+import EmptyState from '../components/EmptyState'
 import ConfirmModal from '../components/ConfirmModal'
 import { getBookings, deleteBooking } from '../services/api'
 import { useAuth } from '../context/AuthContext'
@@ -77,18 +78,13 @@ const MyBookings = () => {
         <section className="py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {bookings.length === 0 ? (
-              <div className="text-center py-20">
-                <svg className="w-20 h-20 text-gray-300 dark:text-gray-600 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-                <p className="text-gray-500 dark:text-gray-400 text-lg mb-2">No Bookings Yet</p>
-                <p className="text-gray-400 dark:text-gray-500 text-sm mb-6">
-                  You haven't booked any homestays yet. Start exploring eco-friendly stays!
-                </p>
-                <Button variant="primary" onClick={() => navigate('/dashboard')}>
-                  Browse Homestays
-                </Button>
-              </div>
+              <EmptyState
+                icon="🧳"
+                title="No Bookings Yet"
+                description="Looks like you haven't booked any eco stays yet. Explore beautiful homestays and start your next adventure."
+                buttonText="Browse Homestays"
+                buttonLink="/"
+              />
             ) : (
               <div className="space-y-6">
                 {bookings.map((booking) => (

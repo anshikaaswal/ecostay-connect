@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import { Button, Modal, Spinner } from '../components/ui'
 import { showSuccess, showError } from '../components/ui'
+import EmptyState from '../components/EmptyState'
 import { getHomestays, createHomestay, updateHomestay, deleteHomestay, getBookings } from '../services/api'
 import { useAuth } from '../context/AuthContext'
 const initialFormState = {
@@ -212,15 +213,14 @@ const Dashboard = () => {
             </div>
             {}
             {homestays.length === 0 ? (
-              <div className="text-center py-20">
-                <svg className="w-20 h-20 text-gray-300 dark:text-gray-600 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                </svg>
-                <p className="text-gray-500 dark:text-gray-400 text-lg mb-4">No Homestays Available</p>
-                {isAdmin && (
-                  <Button variant="primary" onClick={openAddModal}>Add Your First Homestay</Button>
-                )}
-              </div>
+              <EmptyState
+                icon="🏡"
+                title="No Homestays Available"
+                description={isAdmin ? "You haven't added any homestays yet. Create your first listing to get started!" : "No eco-friendly homestays are currently listed. Check back soon!"}
+                buttonText={isAdmin ? "Add Your First Homestay" : "Browse Homestays"}
+                buttonLink={isAdmin ? undefined : "/"}
+                onButtonClick={isAdmin ? openAddModal : undefined}
+              />
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                 {homestays.map((homestay) => (
@@ -322,16 +322,13 @@ const Dashboard = () => {
                     <Spinner size="md" />
                   </div>
                 ) : bookings.length === 0 ? (
-                  <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-2xl shadow-md">
-                    <svg className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    <p className="text-gray-500 dark:text-gray-400 text-lg mb-2">No Bookings Yet</p>
-                    <p className="text-gray-400 dark:text-gray-500 text-sm mb-4">Start exploring and book your first eco-stay!</p>
-                    <Button variant="primary" onClick={() => navigate('/dashboard')}>
-                      Browse Homestays
-                    </Button>
-                  </div>
+                  <EmptyState
+                    icon="🧳"
+                    title="No Bookings Yet"
+                    description="Start exploring and book your first eco-stay! Your next adventure is just a click away."
+                    buttonText="Browse Homestays"
+                    buttonLink="/"
+                  />
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {bookings.slice(0, 3).map((booking) => (
