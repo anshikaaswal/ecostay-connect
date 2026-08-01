@@ -2,7 +2,6 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 dotenv.config();
-console.log("Gemini Key Loaded:", process.env.GEMINI_API_KEY);
 const connectDB = require('./config/database');
 const errorHandler = require('./middleware/errorHandler');
 const homestayRoutes = require('./routes/homestays');
@@ -14,20 +13,15 @@ require('./config/passport')(passport);
 connectDB();
 const app = express();
 const PORT = process.env.PORT || 5000;
-const allowedOrigins = [
-  process.env.FRONTEND_URL || 'http://localhost:5173',
-  'http://localhost:5173',
-  'http://localhost:5174',
-  'http://localhost:5175',
-];
+const frontendOrigin = process.env.FRONTEND_URL?.replace(/\/$/, '') || '';
+const localhostPattern = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
+const allowedOrigins = [frontendOrigin].filter(Boolean);
 app.use(cors({
   origin: function (origin, callback) {
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(null, true);
+    if (!origin || allowedOrigins.includes(origin) || localhostPattern.test(origin)) {
+      return callback(null, true);
     }
+    return callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
 }));
@@ -41,8 +35,7 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
     passport.authenticate('google', { session: false, failureRedirect: '/login' }),
     (req, res) => {
       const { token } = req.user;
-      const redirectUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
-      res.redirect(`${redirectUrl}/login?token=${token}`);
+      res.redirect(`${frontendOrigin}/login?token=${token}`);
     }
   );
 }
@@ -68,5 +61,5 @@ app.get('/', (req, res) => {
 });
 app.use(errorHandler);
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server listening on port ${PORT}`);
 });

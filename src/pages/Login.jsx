@@ -103,7 +103,9 @@ const Login = () => {
     }
   }
   const handleGoogleLogin = () => {
-    window.location.href = 'http://localhost:5000/api/auth/google'
+    const apiBaseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '')
+    const googleAuthUrl = apiBaseUrl ? `${apiBaseUrl}/auth/google` : '/auth/google'
+    window.location.href = googleAuthUrl
   }
   const handleForgotPassword = (e) => {
     e.preventDefault()

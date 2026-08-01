@@ -1,10 +1,9 @@
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'anshikaaswal687@gmail.com';
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL?.trim() || '';
 module.exports = (passport) => {
-  if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
-    console.log('Google OAuth credentials not found. Skipping Google OAuth setup.');
+  if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET || !process.env.GOOGLE_CALLBACK_URL) {
     return;
   }
   passport.use(
@@ -12,12 +11,12 @@ module.exports = (passport) => {
       {
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: process.env.GOOGLE_CALLBACK_URL || 'http://localhost:5000/api/auth/google/callback',
+        callbackURL: process.env.GOOGLE_CALLBACK_URL,
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
           const email = profile.emails[0].value;
-          const role = email.toLowerCase() === ADMIN_EMAIL.toLowerCase() ? 'admin' : 'user';
+          const role = ADMIN_EMAIL && email.toLowerCase() === ADMIN_EMAIL.toLowerCase() ? 'admin' : 'user';
           let user = await User.findOne({ googleId: profile.id });
           if (user) {
             if (role === 'admin' && user.role !== 'admin') {

@@ -1,7 +1,7 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'anshikaaswal687@gmail.com';
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL?.trim() || '';
 const generateToken = (userId, role) => {
   return jwt.sign({ id: userId, role }, process.env.JWT_SECRET, {
     expiresIn: '7d',
@@ -25,7 +25,7 @@ const register = async (req, res) => {
         message: 'Email already registered',
       });
     }
-    const role = email.toLowerCase() === ADMIN_EMAIL.toLowerCase() ? 'admin' : 'user';
+    const role = ADMIN_EMAIL && email.toLowerCase() === ADMIN_EMAIL.toLowerCase() ? 'admin' : 'user';
     const user = await User.create({ name, email, password, role });
     res.status(201).json({
       success: true,

@@ -258,6 +258,49 @@ Frontend runs on `http://localhost:5173`
 | `FRONTEND_URL` | Yes | Frontend URL for CORS |
 | `GOOGLE_CLIENT_ID` | No | Google OAuth client ID |
 | `GOOGLE_CLIENT_SECRET` | No | Google OAuth client secret |
+
+## Deployment
+
+### Required environment variables
+
+Backend:
+- `PORT`
+- `MONGO_URI`
+- `JWT_SECRET`
+- `FRONTEND_URL`
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+- `GOOGLE_CALLBACK_URL`
+- `GEMINI_API_KEY`
+- `ADMIN_EMAIL`
+
+Frontend:
+- `VITE_API_URL`
+
+### Frontend deployment (Vercel)
+1. Build the frontend from the project root with `npm install` and `npm run build`.
+2. Create a Vercel project and set the build command to `npm run build`.
+3. Set the environment variable `VITE_API_URL` to your deployed backend URL, for example `https://your-backend.onrender.com/api`.
+4. Deploy the app and verify the production frontend can reach the API.
+
+### Backend deployment (Render)
+1. Create a Render web service for the backend folder.
+2. Set the start command to `npm start`.
+3. Configure the environment variables listed above, including `FRONTEND_URL` set to your Vercel frontend URL.
+4. Ensure `GOOGLE_CALLBACK_URL` matches the deployed backend callback route, such as `https://your-backend.onrender.com/api/auth/google/callback`.
+
+### Production build commands
+```bash
+npm install
+npm run build
+cd backend && npm install
+```
+
+### Known free-tier limitations
+- Render free tier may sleep after inactivity, so the first request can take longer.
+- Vercel free tier may have cold starts and limited build minutes.
+- MongoDB Atlas free tier has usage limits and may require an IP allowlist configuration.
+- Google OAuth credentials must be configured for the production callback URL to work.
 | `GOOGLE_CALLBACK_URL` | No | Google OAuth callback URL |
 | `GEMINI_API_KEY` | Yes (for AI) | Google Gemini API key for AI Travel Planner |
 
