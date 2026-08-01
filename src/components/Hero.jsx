@@ -80,13 +80,13 @@ const Hero = () => {
           <div className="flex flex-col sm:flex-row gap-4">
             <Link
               to="/dashboard"
-              className="inline-block px-8 py-4 bg-white text-green-800 font-bold text-lg rounded-full shadow-lg hover:bg-green-50 hover:shadow-xl hover:scale-105 transition-all duration-300 text-center"
+              className="inline-block px-8 py-4 bg-white text-green-600 font-bold text-lg rounded-full shadow-lg hover:bg-gray-50 hover:shadow-xl hover:scale-105 transition-all duration-300 text-center"
             >
               Explore Stays
             </Link>
             <Link
               to="/about"
-              className="inline-block px-8 py-4 bg-transparent border-2 border-white text-white font-bold text-lg rounded-full hover:bg-white hover:text-green-800 hover:scale-105 transition-all duration-300 text-center"
+              className="inline-block px-8 py-4 bg-transparent border-2 border-white text-white font-bold text-lg rounded-full hover:bg-white hover:text-green-600 hover:scale-105 transition-all duration-300 text-center"
             >
               Learn More
             </Link>

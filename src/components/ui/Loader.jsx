@@ -6,7 +6,7 @@ const Spinner = ({ size = 'md', className = '' }) => {
         className={`
           ${sizeMap[size] || sizeMap.md}
           border-4 border-gray-200 dark:border-gray-700
-          border-t-blue-600 rounded-full
+          border-t-green-600 rounded-full
           animate-spin
         `}
       />

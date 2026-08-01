@@ -106,7 +106,7 @@ const Navbar = () => {
                           {getInitials(user?.name)}
                         </div>
                         <div className="min-w-0">
-                          <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 truncate">
+                          <p className="text-sm font-semibold text-gray-900 dark:text-gray-200 truncate">
                             {user?.name || 'User'}
                           </p>
                           <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
