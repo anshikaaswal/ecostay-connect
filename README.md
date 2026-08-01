@@ -124,52 +124,69 @@ ecostay-connect/
 
 | Feature | Implementation |
 |---------|---------------|
-| **Password Hashing** | bcryptjs with 12 salt rounds (Mongoose 9 pre-save hook) |
-| **JWT Tokens** | jsonwebtoken with 7-day expiry |
-| **Input Validation** | express-validator (name, email, password) |
-| **Rate Limiting** | express-rate-limit (5 requests per 15 min on auth) |
-| **Google OAuth** | passport-google-oauth20 (optional, requires credentials) |
-| **CORS** | Restricted to frontend origin only |
+| **Password Hashing** | bcryptjs with 12 salt rounds using a Mongoose pre-save hook |
+| **JWT Authentication** | jsonwebtoken with 7-day expiration |
+| **Input Validation** | express-validator for name, email, and password validation |
+| **Rate Limiting** | express-rate-limit (5 authentication requests per 15 minutes) |
+| **Google OAuth** | passport-google-oauth20 (enabled when Google OAuth credentials are configured) |
+| **Admin Access** | Users signing in with the configured admin email are automatically assigned the `admin` role |
+| **CORS** | Configured to allow requests only from the frontend application origin |
 
-### API Endpoints
+---
 
-#### Authentication
+## API Endpoints
+
+### Authentication
+
 | Method | Endpoint | Auth | Description |
 |--------|----------|------|-------------|
-| POST | `/api/auth/register` | No | Register new user |
-| POST | `/api/auth/login` | No | Login, returns JWT |
-| GET | `/api/auth/me` | Yes | Get current user profile |
-| GET | `/api/auth/google` | No | Google OAuth login |
+| POST | `/api/auth/register` | No | Register a new user |
+| POST | `/api/auth/login` | No | Authenticate user and return JWT |
+| GET | `/api/auth/me` | Yes | Get the authenticated user's profile |
+| GET | `/api/auth/google` | No | Start Google OAuth authentication |
 | GET | `/api/auth/google/callback` | No | Google OAuth callback |
 
-#### Homestays
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| GET | `/api/homestays` | No | Get all homestays |
-| GET | `/api/homestays/:id` | No | Get homestay by ID |
-| GET | `/api/homestays/search?q=` | No | Search by name/location |
-| POST | `/api/homestays` | Admin | Create a homestay |
-| PUT | `/api/homestays/:id` | Admin | Update a homestay |
-| DELETE | `/api/homestays/:id` | Admin | Delete a homestay |
+---
 
-#### Bookings
+### Homestays
+
 | Method | Endpoint | Auth | Description |
 |--------|----------|------|-------------|
-| GET | `/api/bookings` | No | Get all bookings |
-| GET | `/api/bookings/:id` | No | Get booking by ID |
-| POST | `/api/bookings` | Yes | Create a booking |
-| DELETE | `/api/bookings/:id` | Yes | Delete a booking |
+| GET | `/api/homestays` | No | Retrieve all homestays |
+| GET | `/api/homestays/:id` | No | Retrieve a homestay by ID |
+| GET | `/api/homestays/search?q=` | No | Search homestays by name or location |
+| POST | `/api/homestays` | Yes (Admin Only) | Create a new homestay |
+| PUT | `/api/homestays/:id` | Yes (Admin Only) | Update an existing homestay |
+| DELETE | `/api/homestays/:id` | Yes (Admin Only) | Delete a homestay |
+
+---
+
+### Bookings
+
+> **Verify these routes with your backend.** If they are protected (which is recommended), use the table below.
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/api/bookings` | Yes | Retrieve bookings for the authenticated user |
+| GET | `/api/bookings/:id` | Yes | Retrieve a booking by ID |
+| POST | `/api/bookings` | Yes | Create a new booking |
+| DELETE | `/api/bookings/:id` | Yes | Cancel/Delete a booking |
+
+---
 
 ### Frontend Authentication
 
-- **AuthContext** — Global auth state with login, logout, and token management
+- **AuthContext** — Centralized authentication state management
 - **ProtectedRoute** — Redirects unauthenticated users to `/login`
-- **JWT Storage** — Token stored in localStorage
-- **Axios Interceptor** — Automatically attaches `Bearer` token to requests
+- **JWT Storage** — Authentication token stored securely in `localStorage`
+- **Axios Interceptor** — Automatically attaches the JWT Bearer token to authenticated requests
 
-#### Protected Frontend Routes
-- `/dashboard` — Requires authentication
-- `/settings` — Requires authentication
+### Protected Frontend Routes
+
+- `/dashboard`
+- `/settings`
+- `/my-bookings`
+
 
 ## Setup Instructions
 
