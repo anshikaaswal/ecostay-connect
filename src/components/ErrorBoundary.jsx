@@ -22,7 +22,7 @@ class ErrorBoundary extends Component {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
               </svg>
             </div>
-            <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-200 mb-3">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-200 mb-3">
               Something went wrong
             </h1>
             <p className="text-gray-600 dark:text-gray-400 mb-6">
@@ -31,7 +31,7 @@ class ErrorBoundary extends Component {
             <div className="flex gap-3 justify-center">
               <button
                 onClick={() => window.location.reload()}
-                className="px-6 py-3 bg-green-700 text-white font-bold rounded-lg hover:bg-green-800 transition-colors cursor-pointer"
+                className="px-6 py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition-colors cursor-pointer"
               >
                 Refresh Page
               </button>

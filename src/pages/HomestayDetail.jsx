@@ -92,8 +92,8 @@ const HomestayDetail = () => {
         <Navbar />
         <main className="flex-grow flex items-center justify-center">
           <div className="text-center">
-            <h2 className="text-3xl font-bold text-gray-800 mb-4">Homestay Not Found</h2>
-            <Link to="/" className="text-green-700 hover:text-green-800 font-medium">Back to Home</Link>
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Homestay Not Found</h2>
+            <Link to="/" className="text-green-600 hover:text-green-700 font-medium">Back to Home</Link>
           </div>
         </main>
         <Footer />
@@ -127,12 +127,12 @@ const HomestayDetail = () => {
             <div className="lg:col-span-2 space-y-8">
               {}
               <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-md">
-                <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">About This Stay</h2>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-4">About This Stay</h2>
                 <p className="text-gray-600 dark:text-gray-400 leading-relaxed">{homestay.description}</p>
               </div>
               {}
               <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-md">
-                <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">Amenities</h2>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-4">Amenities</h2>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {homestay.amenities.map((amenity, index) => (
                     <div key={index} className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
@@ -149,7 +149,7 @@ const HomestayDetail = () => {
             <div className="lg:col-span-1">
               <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-md sticky top-24">
                 <div className="mb-6">
-                  <p className="text-3xl font-bold text-green-700 dark:text-green-400">₹{homestay.price} / night</p>
+                  <p className="text-3xl font-bold text-green-600 dark:text-green-400">₹{homestay.price} / night</p>
                   <div className="flex items-center mt-2 text-sm text-gray-500 dark:text-gray-400">
                     <span className="text-yellow-400 mr-1">★</span>
                     <span className="font-semibold mr-1">{homestay.rating}</span>

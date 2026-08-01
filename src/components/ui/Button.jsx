@@ -1,7 +1,7 @@
 const variantStyles = {
-  primary: 'bg-green-700 text-white hover:bg-green-800 shadow-md hover:shadow-lg',
+  primary: 'bg-green-600 text-white hover:bg-green-700 shadow-md hover:shadow-lg',
   secondary: 'bg-gray-200 text-gray-800 hover:bg-gray-300',
-  outline: 'bg-transparent border-2 border-green-700 text-green-700 hover:bg-green-700 hover:text-white',
+  outline: 'bg-transparent border-2 border-green-600 text-green-600 hover:bg-green-600 hover:text-white',
 }
 const sizeStyles = {
   sm: 'px-4 py-2 text-sm rounded-lg',

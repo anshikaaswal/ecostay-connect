@@ -9,7 +9,7 @@ const Card = ({ image, title, description, id }) => {
     navigate(`/homestay/${id}`)
   }
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-[1.03] hover:shadow-2xl group cursor-pointer"
+    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden transform transition-all duration-300 hover:scale-[1.03] hover:shadow-2xl group cursor-pointer"
       onClick={() => navigate(`/homestay/${id}`)}
     >
       <div className="relative h-56 overflow-hidden">
@@ -21,10 +21,10 @@ const Card = ({ image, title, description, id }) => {
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
       </div>
       <div className="p-6">
-        <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-3 group-hover:text-green-700 dark:group-hover:text-green-400 transition-colors">
+        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-200 mb-3 group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">
           {title}
         </h3>
-        <p className="text-gray-600 dark:text-gray-400 mb-5 leading-relaxed line-clamp-3">
+        <p className="text-gray-700 dark:text-gray-400 mb-5 leading-relaxed line-clamp-3">
           {description}
         </p>
         <Button

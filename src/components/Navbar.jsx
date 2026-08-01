@@ -58,40 +58,40 @@ const Navbar = () => {
     navigate(path)
   }
   return (
-    <nav className="bg-green-800 dark:bg-gray-900 text-white shadow-lg">
+    <nav className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {}
           <Link to="/" className="flex items-center space-x-2">
-            <svg className="h-8 w-8 text-green-300" fill="currentColor" viewBox="0 0 24 24">
+            <svg className="h-8 w-8 text-green-600" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 3L4 9v12h16V9l-8-6zM10 15h4v4h-4v-4z"/>
             </svg>
-            <span className="font-bold text-xl tracking-tight">EcoStay Connect</span>
+            <span className="font-bold text-xl tracking-tight text-gray-900 dark:text-gray-100">EcoStay Connect</span>
           </Link>
           {}
           <div className="hidden md:flex items-center space-x-6">
-            <Link to="/" className="hover:text-green-300 dark:hover:text-green-400 transition-colors duration-200 font-medium">Home</Link>
-            <Link to="/about" className="hover:text-green-300 dark:hover:text-green-400 transition-colors duration-200 font-medium">About</Link>
-            <Link to="/dashboard" className="hover:text-green-300 dark:hover:text-green-400 transition-colors duration-200 font-medium">Dashboard</Link>
+            <Link to="/" className="text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors duration-200 font-medium">Home</Link>
+            <Link to="/about" className="text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors duration-200 font-medium">About</Link>
+            <Link to="/dashboard" className="text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors duration-200 font-medium">Dashboard</Link>
             {isAuthenticated && (
-              <Link to="/my-bookings" className="hover:text-green-300 dark:hover:text-green-400 transition-colors duration-200 font-medium">My Bookings</Link>
+              <Link to="/my-bookings" className="text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors duration-200 font-medium">My Bookings</Link>
             )}
-            <Link to="/settings" className="hover:text-green-300 dark:hover:text-green-400 transition-colors duration-200 font-medium">Settings</Link>
-            <Link to="/ai-planner" className="hover:text-green-300 dark:hover:text-green-400 transition-colors duration-200 font-medium">AI Planner</Link>
+            <Link to="/settings" className="text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors duration-200 font-medium">Settings</Link>
+            <Link to="/ai-planner" className="text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors duration-200 font-medium">AI Planner</Link>
             {isAuthenticated ? (
               <div className="relative" ref={profileRef}>
                 {}
                 <div className="relative">
                   <button
                     onClick={() => setProfileOpen(!profileOpen)}
-                    className="w-10 h-10 bg-emerald-500 hover:bg-emerald-400 rounded-full flex items-center justify-center text-white font-bold text-sm transition-all duration-200 hover:shadow-lg hover:shadow-emerald-500/30 hover:scale-105 cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 focus:ring-offset-green-800 dark:focus:ring-offset-gray-900"
+                    className="w-10 h-10 bg-emerald-500 hover:bg-emerald-400 rounded-full flex items-center justify-center text-white font-bold text-sm transition-all duration-200 hover:shadow-lg hover:shadow-emerald-500/30 hover:scale-105 cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900"
                     aria-label="User menu"
                     aria-expanded={profileOpen}
                   >
                     {getInitials(user?.name)}
                   </button>
                   {isAdmin && (
-                    <span className="absolute -top-1.5 -right-1.5 bg-amber-400 text-amber-900 text-[10px] font-bold px-1.5 py-0.5 rounded-full shadow-sm border-2 border-green-800 dark:border-gray-900 leading-none">
+                    <span className="absolute -top-1.5 -right-1.5 bg-amber-400 text-amber-900 text-[10px] font-bold px-1.5 py-0.5 rounded-full shadow-sm border-2 border-white dark:border-gray-900 leading-none">
                       Admin
                     </span>
                   )}
@@ -161,12 +161,12 @@ const Navbar = () => {
                 )}
               </div>
             ) : (
-              <Link to="/login" className="hover:text-green-300 dark:hover:text-green-400 transition-colors duration-200 font-medium">Login</Link>
+              <Link to="/login" className="text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors duration-200 font-medium">Login</Link>
             )}
             {}
             <button
               onClick={() => setDarkMode(!darkMode)}
-              className="p-2 rounded-lg bg-green-700 dark:bg-gray-700 hover:bg-green-600 dark:hover:bg-gray-600 transition-colors cursor-pointer"
+              className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors cursor-pointer"
               aria-label="Toggle theme"
             >
               {darkMode ? (
@@ -174,7 +174,7 @@ const Navbar = () => {
                   <path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
                 </svg>
               ) : (
-                <svg className="w-5 h-5 text-gray-200" fill="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
                 </svg>
               )}
@@ -184,7 +184,7 @@ const Navbar = () => {
           <div className="flex items-center space-x-2 md:hidden">
             <button
               onClick={() => setDarkMode(!darkMode)}
-              className="p-2 rounded-lg bg-green-700 dark:bg-gray-700 hover:bg-green-600 dark:hover:bg-gray-600 transition-colors cursor-pointer"
+              className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors cursor-pointer"
               aria-label="Toggle theme"
             >
               {darkMode ? (
@@ -192,14 +192,14 @@ const Navbar = () => {
                   <path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
                 </svg>
               ) : (
-                <svg className="w-5 h-5 text-gray-200" fill="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
                 </svg>
               )}
             </button>
             <button
               onClick={toggleMenu}
-              className="inline-flex items-center justify-center p-2 rounded-md text-green-200 hover:text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-green-400"
+              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-green-500"
               aria-label="Toggle menu"
             >
               {isOpen ? (
@@ -217,42 +217,42 @@ const Navbar = () => {
       </div>
       {}
       {isOpen && (
-        <div className="md:hidden bg-green-700 dark:bg-gray-800 px-4 pb-4 space-y-2">
-          <Link to="/" onClick={() => setIsOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium hover:bg-green-600 dark:hover:bg-gray-700 transition-colors">Home</Link>
-          <Link to="/about" onClick={() => setIsOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium hover:bg-green-600 dark:hover:bg-gray-700 transition-colors">About</Link>
-          <Link to="/dashboard" onClick={() => setIsOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium hover:bg-green-600 dark:hover:bg-gray-700 transition-colors">Dashboard</Link>
+        <div className="md:hidden bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 px-4 pb-4 space-y-2">
+          <Link to="/" onClick={() => setIsOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">Home</Link>
+          <Link to="/about" onClick={() => setIsOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">About</Link>
+          <Link to="/dashboard" onClick={() => setIsOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">Dashboard</Link>
           {isAuthenticated && (
-            <Link to="/my-bookings" onClick={() => setIsOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium hover:bg-green-600 dark:hover:bg-gray-700 transition-colors">My Bookings</Link>
+            <Link to="/my-bookings" onClick={() => setIsOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">My Bookings</Link>
           )}
-          <Link to="/settings" onClick={() => setIsOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium hover:bg-green-600 dark:hover:bg-gray-700 transition-colors">Settings</Link>
-          <Link to="/ai-planner" onClick={() => setIsOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium hover:bg-green-600 dark:hover:bg-gray-700 transition-colors">AI Planner</Link>
+          <Link to="/settings" onClick={() => setIsOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">Settings</Link>
+          <Link to="/ai-planner" onClick={() => setIsOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">AI Planner</Link>
           {isAuthenticated ? (
-            <div className="border-t border-green-600 dark:border-gray-700 pt-2 mt-2">
-              <div className="flex items-center gap-3 px-3 py-2 text-green-200">
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-2 mt-2">
+              <div className="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300">
                 <div className="relative">
                   <div className="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
                     {getInitials(user?.name)}
                   </div>
                   {isAdmin && (
-                    <span className="absolute -top-1 -right-1 bg-amber-400 text-amber-900 text-[9px] font-bold px-1 py-0.5 rounded-full border-2 border-green-700 dark:border-gray-800 leading-none">
+                    <span className="absolute -top-1 -right-1 bg-amber-400 text-amber-900 text-[9px] font-bold px-1 py-0.5 rounded-full border-2 border-white dark:border-gray-800 leading-none">
                       Admin
                     </span>
                   )}
                 </div>
                 <div className="min-w-0">
                   <p className="text-sm font-medium truncate">{user?.name || 'User'}</p>
-                  <p className="text-xs text-green-300 truncate">{user?.email || ''}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user?.email || ''}</p>
                 </div>
               </div>
               <button
                 onClick={() => { handleLogout(); setIsOpen(false) }}
-                className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-red-200 hover:bg-red-700 transition-colors cursor-pointer"
+                className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors cursor-pointer"
               >
                 Logout
               </button>
             </div>
           ) : (
-            <Link to="/login" onClick={() => setIsOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium hover:bg-green-600 dark:hover:bg-gray-700 transition-colors">Login</Link>
+            <Link to="/login" onClick={() => setIsOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">Login</Link>
           )}
         </div>
       )}

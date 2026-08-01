@@ -50,15 +50,15 @@ const AIPlanner = () => {
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
       <Navbar />
       <main className="flex-grow">
-        <section className="bg-gradient-to-r from-green-700 to-teal-600 dark:from-gray-800 dark:to-gray-700 text-white py-16">
+        <section className="bg-white dark:from-gray-800 dark:to-gray-700 border-b border-gray-200 dark:border-gray-700 py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
               </svg>
             </div>
-            <h1 className="text-4xl sm:text-5xl font-bold mb-4">AI Travel Planner</h1>
-            <p className="text-teal-100 text-lg max-w-2xl mx-auto">
+            <h1 className="text-4xl sm:text-5xl font-bold mb-4 text-gray-900 dark:text-gray-100">AI Travel Planner</h1>
+            <p className="text-gray-700 dark:text-gray-300 text-lg max-w-2xl mx-auto">
               Tell us your preferences and our AI will generate a personalized eco-friendly travel plan for you.
             </p>
           </div>
@@ -69,7 +69,7 @@ const AIPlanner = () => {
               {}
               <div className="lg:col-span-1">
                 <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-8 sticky top-24">
-                  <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6">Your Preferences</h2>
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-6">Your Preferences</h2>
                   <form onSubmit={handleGenerate} className="space-y-5">
                     <Input
                       label="Destination"
@@ -163,10 +163,10 @@ const AIPlanner = () => {
                 {travelPlan && !loading && (
                   <div className="space-y-8">
                     {}
-                    <div className="bg-gradient-to-r from-green-50 to-teal-50 dark:from-gray-800 dark:to-gray-800 rounded-2xl p-8 shadow-md border border-green-100 dark:border-gray-700">
+                    <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-md border border-gray-200 dark:border-gray-700">
                       <div className="flex items-start justify-between mb-4">
                         <div>
-                          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200">
+                          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200">
                             {travelPlan.destination}
                           </h2>
                           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
@@ -174,13 +174,13 @@ const AIPlanner = () => {
                           </p>
                         </div>
                       </div>
-                      <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                      <p className="text-gray-700 dark:text-gray-400 leading-relaxed">
                         {travelPlan.travelSummary}
                       </p>
                     </div>
                     {}
                     <div>
-                      <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4 flex items-center">
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-gray-200 mb-4 flex items-center">
                         <svg className="w-6 h-6 mr-2 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
@@ -236,7 +236,7 @@ const AIPlanner = () => {
                     {}
                     {travelPlan.foodRecommendations && travelPlan.foodRecommendations.length > 0 && (
                       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-8">
-                        <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4 flex items-center">
+                        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-200 mb-4 flex items-center">
                           <svg className="w-6 h-6 mr-2 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
@@ -260,7 +260,7 @@ const AIPlanner = () => {
                     {}
                     {travelPlan.ecoFriendlyTips && travelPlan.ecoFriendlyTips.length > 0 && (
                       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-8">
-                        <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4 flex items-center">
+                        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-200 mb-4 flex items-center">
                           <svg className="w-6 h-6 mr-2 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                           </svg>

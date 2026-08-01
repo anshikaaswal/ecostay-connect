@@ -34,7 +34,7 @@ const Breadcrumb = () => {
 
   return (
     <nav aria-label="Breadcrumb" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
-      <ol className="inline-flex items-center gap-1.5 bg-green-50 dark:bg-green-900/20 rounded-lg px-3 py-1.5 text-sm">
+      <ol className="inline-flex items-center gap-1.5 bg-gray-50 dark:bg-gray-800 rounded-lg px-3 py-1.5 text-sm border border-gray-200 dark:border-gray-700">
         <li>
           <Link
             to="/"
@@ -46,7 +46,7 @@ const Breadcrumb = () => {
         {breadcrumbs.map((crumb) => (
           <li key={crumb.path} className="flex items-center gap-1.5">
             <svg
-              className="w-3.5 h-3.5 text-green-400 dark:text-green-500 flex-shrink-0"
+              className="w-3.5 h-3.5 text-gray-400 dark:text-gray-500 flex-shrink-0"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -55,7 +55,7 @@ const Breadcrumb = () => {
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
             </svg>
             {crumb.isLast ? (
-              <span className="font-semibold text-green-900 dark:text-green-100">
+              <span className="font-semibold text-gray-900 dark:text-gray-100">
                 {crumb.label}
               </span>
             ) : (

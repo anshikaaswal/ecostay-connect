@@ -156,24 +156,24 @@ const Dashboard = () => {
       <Navbar />
       <main className="flex-grow">
         {}
-        <section className="bg-gradient-to-r from-green-700 to-green-600 dark:from-gray-800 dark:to-gray-700 text-white py-16">
+        <section className="bg-white dark:from-gray-800 dark:to-gray-700 border-b border-gray-200 dark:border-gray-700 py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h1 className="text-4xl sm:text-5xl font-bold mb-2">
+            <h1 className="text-4xl sm:text-5xl font-bold mb-2 text-gray-900 dark:text-gray-100">
               {isAdmin ? 'Admin Dashboard' : 'My Dashboard'}
             </h1>
-            <p className="text-green-100 dark:text-gray-300 text-lg">
+            <p className="text-gray-700 dark:text-gray-300 text-lg">
               {isAdmin
                 ? 'Manage homestays — add, edit, or remove listings.'
                 : 'Welcome back, explore and manage your eco-stay experience.'}
             </p>
             {user && (
-              <div className="mt-4 flex items-center gap-3 bg-white/10 rounded-xl px-5 py-3 w-fit">
-                <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
+              <div className="mt-4 flex items-center gap-3 bg-gray-50 dark:bg-gray-800 rounded-xl px-5 py-3 w-fit border border-gray-200 dark:border-gray-700">
+                <div className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
                   {user.name?.charAt(0)?.toUpperCase() || 'U'}
                 </div>
                 <div>
-                  <p className="font-semibold">{user.name}</p>
-                  <p className="text-sm text-green-200">{user.email}</p>
+                  <p className="font-semibold text-gray-900 dark:text-gray-100">{user.name}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{user.email}</p>
                 </div>
               </div>
             )}
@@ -187,11 +187,11 @@ const Dashboard = () => {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full sm:w-auto">
                 <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border-l-4 border-green-500">
                   <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Homestays</p>
-                  <p className="text-2xl font-bold text-gray-800 dark:text-gray-200">{homestays.length}</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-gray-200">{homestays.length}</p>
                 </div>
                 <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border-l-4 border-teal-500">
                   <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">Avg Rating</p>
-                  <p className="text-2xl font-bold text-gray-800 dark:text-gray-200">
+                  <p className="text-2xl font-bold text-gray-900 dark:text-gray-200">
                     {homestays.length > 0
                       ? (homestays.reduce((sum, h) => sum + (h.rating || 0), 0) / homestays.length).toFixed(1)
                       : '—'}
@@ -199,7 +199,7 @@ const Dashboard = () => {
                 </div>
                 <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 border-l-4 border-amber-500">
                   <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">My Bookings</p>
-                  <p className="text-2xl font-bold text-gray-800 dark:text-gray-200">{bookings.length}</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-gray-200">{bookings.length}</p>
                 </div>
               </div>
               {isAdmin && (
@@ -226,7 +226,7 @@ const Dashboard = () => {
                 {homestays.map((homestay) => (
                   <div
                     key={homestay._id}
-                    className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden transform transition-all duration-300 hover:shadow-2xl group cursor-pointer"
+                    className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden transform transition-all duration-300 hover:shadow-2xl group cursor-pointer"
                     onClick={() => navigate(`/homestay/${homestay._id}`)}
                   >
                     {}
@@ -249,7 +249,7 @@ const Dashboard = () => {
                     </div>
                     {}
                     <div className="p-5">
-                      <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-1 truncate">{homestay.name}</h3>
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-gray-200 mb-1 truncate">{homestay.name}</h3>
                       <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-2">
                         <svg className="w-4 h-4 mr-1 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -258,7 +258,7 @@ const Dashboard = () => {
                         {homestay.location}
                       </div>
                       <p className="text-2xl font-bold text-green-700 dark:text-green-400 mb-2">₹{homestay.price}/night</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">{homestay.description}</p>
+                      <p className="text-sm text-gray-700 dark:text-gray-400 mb-4 line-clamp-2">{homestay.description}</p>
                       {}
                       {homestay.amenities && homestay.amenities.length > 0 && (
                         <div className="flex flex-wrap gap-1.5 mb-4">
@@ -310,7 +310,7 @@ const Dashboard = () => {
             {!isAdmin && (
               <div className="mt-16">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200">My Bookings</h2>
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200">My Bookings</h2>
                   {bookings.length > 0 && (
                     <Button variant="outline" size="sm" onClick={() => navigate('/my-bookings')}>
                       View All
@@ -334,7 +334,7 @@ const Dashboard = () => {
                     {bookings.slice(0, 3).map((booking) => (
                       <div
                         key={booking._id}
-                        className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+                        className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg transition-shadow"
                       >
                         <div className="h-36 overflow-hidden">
                           <img
@@ -345,14 +345,14 @@ const Dashboard = () => {
                           />
                         </div>
                         <div className="p-4">
-                          <h3 className="font-bold text-gray-800 dark:text-gray-200 truncate">
+                          <h3 className="font-bold text-gray-900 dark:text-gray-200 truncate">
                             {booking.homestay?.name || 'Unknown Homestay'}
                           </h3>
                           <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
                             {booking.homestay?.location || ''}
                           </p>
                           <div className="flex items-center justify-between text-sm">
-                            <span className="text-gray-600 dark:text-gray-400">
+                            <span className="text-gray-700 dark:text-gray-400">
                               {formatDate(booking.checkIn)} - {formatDate(booking.checkOut)}
                             </span>
                             <span

@@ -66,10 +66,10 @@ const MyBookings = () => {
       <Navbar />
       <main className="flex-grow">
         {}
-        <section className="bg-gradient-to-r from-green-700 to-green-600 dark:from-gray-800 dark:to-gray-700 text-white py-16">
+        <section className="bg-white dark:from-gray-800 dark:to-gray-700 border-b border-gray-200 dark:border-gray-700 py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h1 className="text-4xl sm:text-5xl font-bold mb-2">My Bookings</h1>
-            <p className="text-green-100 dark:text-gray-300 text-lg">
+            <h1 className="text-4xl sm:text-5xl font-bold mb-2 text-gray-900 dark:text-gray-100">My Bookings</h1>
+            <p className="text-gray-700 dark:text-gray-300 text-lg">
               View and manage your homestay bookings.
             </p>
           </div>
@@ -90,7 +90,7 @@ const MyBookings = () => {
                 {bookings.map((booking) => (
                   <div
                     key={booking._id}
-                    className="bg-white dark:bg-gray-800 rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+                    className="bg-white dark:bg-gray-800 rounded-2xl shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg transition-shadow"
                   >
                     <div className="flex flex-col md:flex-row">
                       {}
@@ -106,7 +106,7 @@ const MyBookings = () => {
                       <div className="flex-1 p-6">
                         <div className="flex items-start justify-between mb-4">
                           <div>
-                            <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200">
+                            <h3 className="text-xl font-bold text-gray-900 dark:text-gray-200">
                               {booking.homestay?.name || 'Unknown Homestay'}
                             </h3>
                             <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -128,25 +128,25 @@ const MyBookings = () => {
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                           <div>
                             <p className="text-xs text-gray-500 dark:text-gray-400 uppercase">Check-in</p>
-                            <p className="font-semibold text-gray-800 dark:text-gray-200">
+                            <p className="font-semibold text-gray-900 dark:text-gray-200">
                               {formatDate(booking.checkIn)}
                             </p>
                           </div>
                           <div>
                             <p className="text-xs text-gray-500 dark:text-gray-400 uppercase">Check-out</p>
-                            <p className="font-semibold text-gray-800 dark:text-gray-200">
+                            <p className="font-semibold text-gray-900 dark:text-gray-200">
                               {formatDate(booking.checkOut)}
                             </p>
                           </div>
                           <div>
                             <p className="text-xs text-gray-500 dark:text-gray-400 uppercase">Guests</p>
-                            <p className="font-semibold text-gray-800 dark:text-gray-200">
+                            <p className="font-semibold text-gray-900 dark:text-gray-200">
                               {booking.guests} {booking.guests === 1 ? 'Guest' : 'Guests'}
                             </p>
                           </div>
                           <div>
                             <p className="text-xs text-gray-500 dark:text-gray-400 uppercase">Booked On</p>
-                            <p className="font-semibold text-gray-800 dark:text-gray-200">
+                            <p className="font-semibold text-gray-900 dark:text-gray-200">
                               {formatDate(booking.createdAt)}
                             </p>
                           </div>

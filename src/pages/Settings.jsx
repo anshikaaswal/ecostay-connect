@@ -47,17 +47,17 @@ const Settings = () => {
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
       <Navbar />
       <main className="flex-grow">
-        <section className="bg-gradient-to-r from-green-700 to-green-600 dark:from-gray-800 dark:to-gray-700 text-white py-16">
+        <section className="bg-white dark:from-gray-800 dark:to-gray-700 border-b border-gray-200 dark:border-gray-700 py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h1 className="text-4xl sm:text-5xl font-bold mb-2">Settings</h1>
-            <p className="text-green-100 text-lg">Manage your profile, theme, and preferences.</p>
+            <h1 className="text-4xl sm:text-5xl font-bold mb-2 text-gray-900 dark:text-gray-100">Settings</h1>
+            <p className="text-gray-700 dark:text-gray-300 text-lg">Manage your profile, theme, and preferences.</p>
           </div>
         </section>
         <section className="py-16">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
             {}
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-8">
-              <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6">Profile</h2>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-6">Profile</h2>
               <form onSubmit={handleSaveProfile} className="space-y-5">
                 <Input
                   label="Full Name"
@@ -81,7 +81,7 @@ const Settings = () => {
             </div>
             {}
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-8">
-              <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6">Theme</h2>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-6">Theme</h2>
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-700 dark:text-gray-300 font-medium">Dark Mode</p>
@@ -103,7 +103,7 @@ const Settings = () => {
             </div>
             {}
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-8">
-              <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6">Notifications</h2>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 mb-6">Notifications</h2>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>

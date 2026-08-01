@@ -122,7 +122,7 @@ const Login = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
               </div>
-              <h2 className="text-3xl font-bold text-gray-800">
+              <h2 className="text-3xl font-bold text-gray-900">
                 {isRegister ? 'Create Account' : 'Welcome Back'}
               </h2>
               <p className="text-gray-500 mt-2">
@@ -191,7 +191,7 @@ const Login = () => {
                   <button
                     type="button"
                     onClick={handleForgotPassword}
-                    className="text-green-700 hover:text-green-800 font-medium cursor-pointer"
+                    className="text-green-600 hover:text-green-700 font-medium cursor-pointer"
                   >
                     Forgot password?
                   </button>
@@ -200,7 +200,7 @@ const Login = () => {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full py-3 bg-green-700 text-white font-bold text-lg rounded-lg hover:bg-green-800 transition-colors shadow-md hover:shadow-lg cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-3 bg-green-600 text-white font-bold text-lg rounded-lg hover:bg-green-700 transition-colors shadow-md hover:shadow-lg cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {submitting
                   ? 'Processing...'
@@ -244,7 +244,7 @@ const Login = () => {
                   Already have an account?{' '}
                   <button
                     onClick={() => setIsRegister(false)}
-                    className="text-green-700 hover:text-green-800 font-medium cursor-pointer"
+                    className="text-green-600 hover:text-green-700 font-medium cursor-pointer"
                   >
                     Sign in
                   </button>
@@ -254,7 +254,7 @@ const Login = () => {
                   Don't have an account?{' '}
                   <button
                     onClick={() => setIsRegister(true)}
-                    className="text-green-700 hover:text-green-800 font-medium cursor-pointer"
+                    className="text-green-600 hover:text-green-700 font-medium cursor-pointer"
                   >
                     Sign up
                   </button>
