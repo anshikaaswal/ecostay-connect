@@ -488,3 +488,59 @@ See `PROMPTS.md` for detailed prompt engineering documentation, including three 
 - [x] Booking works after login
 - [x] Rate limiting returns 429 after repeated attempts
 - [x] Admin-only routes require admin role
+
+# Deployment Documentation
+
+## Live URLs
+
+### Frontend
+- Live URL: https://your-frontend-url.vercel.app
+
+### Backend
+- Live API URL: https://ecostay-connect.onrender.com
+
+---
+
+## Tech Stack Summary
+
+### Frontend
+- React.js (React 19)
+- Vite
+- Tailwind CSS
+- React Router DOM
+- Axios
+- Framer Motion
+- React Hot Toast
+- React Hook Form
+
+### Backend
+- Node.js
+- Express.js
+- MongoDB Atlas
+- Mongoose
+- JWT Authentication
+- Passport.js (Google OAuth)
+- Express Validator
+- Express Rate Limiter
+
+### Deployment
+- Frontend: Vercel
+- Backend: Render
+- Database: MongoDB Atlas
+
+---
+
+## Known Limitations on Free Tier
+
+### Backend (Render Free Tier)
+- The Render free tier automatically spins down the backend service after a period of inactivity.
+- The first request after inactivity may take approximately 30–60 seconds because the server needs to wake up.
+- Limited CPU and memory resources are available compared to paid plans.
+
+### Database (MongoDB Atlas Free Tier)
+- Free cluster has limited storage and performance capacity.
+- Database performance may reduce with high traffic or large amounts of data.
+
+### Frontend (Vercel Free Tier)
+- Suitable for personal projects and small-scale deployments.
+- Usage limits apply for bandwidth and build minutes.
