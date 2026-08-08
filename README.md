@@ -531,8 +531,13 @@ See `PROMPTS.md` for detailed prompt engineering documentation, including three 
 ---
 ## Screenshots
 
-### Home Page
+### 1. Home Page
+
 ![EcoStay Connect Home Page](./screenshots/HomePage.png)
+
+### 2. Dashboard
+
+![EcoStay Connect Dashboard](./screenshots/Dashboard.png)
 
 
 ## Known Limitations on Free Tier
