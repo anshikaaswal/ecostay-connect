@@ -494,7 +494,7 @@ See `PROMPTS.md` for detailed prompt engineering documentation, including three 
 ## Live URLs
 
 ### Frontend
-- Live URL: https://your-frontend-url.vercel.app
+- Live URL: https://ecostay-connect.vercel.app/
 
 ### Backend
 - Live API URL: https://ecostay-connect.onrender.com
