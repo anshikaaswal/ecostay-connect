@@ -538,6 +538,13 @@ See `PROMPTS.md` for detailed prompt engineering documentation, including three 
 ### 2. Dashboard
 
 ![EcoStay Connect Dashboard](./screenshots/Dashboard.png)
+### 3. My Bookings
+
+![EcoStay Connect My Bookings](./screenshots/MyBookings.png)
+
+### 4. AI Planner
+
+![EcoStay Connect AI Planner](./screenshots/AIPlanner.png)
 
 
 ## Known Limitations on Free Tier
