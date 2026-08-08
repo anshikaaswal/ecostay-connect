@@ -529,6 +529,11 @@ See `PROMPTS.md` for detailed prompt engineering documentation, including three 
 - Database: MongoDB Atlas
 
 ---
+## Screenshots
+
+### Home Page
+![EcoStay Connect Home Page](./screenshots/HomePage.png)
+
 
 ## Known Limitations on Free Tier
 
